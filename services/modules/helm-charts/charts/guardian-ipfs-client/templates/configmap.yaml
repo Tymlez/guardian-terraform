@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "guardian-ipfs-client.fullname" . }}-{{ .Release.Revision }}
+data:  
+  MQ_ADDRESS: guardian-message-broker-{{ .Release.Revision }}
+  DB_HOST: mongodb
+  DB_DATABASE: ipfs_client_db
+  SERVICE_CHANNEL: "ipfs-client"
+  NFT_API_KEY: {{ .Values.global.guardian.ipfsKey }}

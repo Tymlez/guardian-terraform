@@ -1,0 +1,28 @@
+# It is recommended to bring these variables
+# into Terraform Cloud so they can be secured
+
+
+#Core Authentication
+aws_access_key_id=""
+aws_secret_access_key=""
+
+gcp_service_account=""
+gcp_project_id=""
+gcp_region=""
+
+docker_hub_username=""
+docker_hub_password=""
+
+#Guardian Requirements
+guardian_operator_id=""
+guardian_operator_key=""
+guardian_ipfs_key=""
+guardian_topic_id=""
+guardian_access_token_secret="supersecretsauce"
+
+#TF Vars
+stage="dev"
+app_name="TYMLEZ"
+
+
+

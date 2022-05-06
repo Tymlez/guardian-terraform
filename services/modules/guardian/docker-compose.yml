@@ -1,0 +1,93 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo
+    restart: always
+    expose:
+      - 27017
+
+  message-broker: 
+    build:
+      context: ./repo
+      dockerfile: ./message-broker/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-message-broker:latest
+    expose:
+      - 7500
+      - 3003
+
+  logger-service:
+    build:
+      context: ./repo
+      dockerfile: ./logger-service/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-logger-service:latest
+    depends_on:
+      - message-broker
+
+  auth-service:
+    build:
+      context: ./repo
+      dockerfile: ./auth-service/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-auth-service:latest
+    depends_on:
+      - mongo
+      - message-broker
+      - logger-service
+
+  api-gateway:
+    build:
+      context: ./repo
+      dockerfile: ./api-gateway/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-api-gateway:latest
+    expose:
+      - 3002
+    depends_on:
+      - mongo
+      - message-broker
+      - guardian-service
+      - auth-service
+      - logger-service
+
+  guardian-service:
+    build:
+      context: ./repo
+      dockerfile: ./guardian-service/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-guardian-service:latest
+    depends_on:
+      - mongo
+      - message-broker
+      - auth-service
+      - logger-service
+
+  ipfs-client:
+    build:
+      context: ./repo
+      dockerfile: ./ipfs-client/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-ipfs-client:latest
+    ports:
+      - "5001:5001"
+      - "5002:5002"
+      - "4001:4001"
+      - "4002:4002"
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - message-broker
+      - logger-service
+
+  web-proxy:
+    build:
+      context: ./repo
+      dockerfile: ./web-proxy/Dockerfile
+    image: ${DOCKER_HUB_REPOSITORY}/guardian-web-proxy:latest
+    ports:
+      - "3000:80"
+    depends_on:
+      - guardian-service
+      - auth-service
+      - api-gateway
+      
+
+volumes:
+  mongo:
+  # volume-guardian-service:
+  # volume-message-broker:

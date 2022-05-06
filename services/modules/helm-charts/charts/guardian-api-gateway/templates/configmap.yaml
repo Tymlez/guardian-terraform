@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "guardian-api-gateway.fullname" . }}-{{ .Release.Revision }}
+data:  
+  MQ_ADDRESS: guardian-message-broker-{{ .Release.Revision }}
+  SERVICE_CHANNEL: "api-gateway"

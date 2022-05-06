@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "guardian-logger-service.fullname" . }}-{{ .Release.Revision }}
+data:  
+  MQ_ADDRESS: guardian-message-broker-{{ .Release.Revision }}
+  DB_HOST: mongodb
+  DB_DATABASE: guardian_db
+  SERVICE_CHANNEL: "logger-service"
+ 

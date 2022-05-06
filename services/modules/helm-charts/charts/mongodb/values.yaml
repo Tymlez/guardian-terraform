@@ -1,0 +1,5 @@
+persistence:
+  size: 50Gi
+useStatefulSet: true
+auth:
+  enabled: false
