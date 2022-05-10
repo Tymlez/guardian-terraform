@@ -85,4 +85,5 @@ module "helm-charts" {
 
 
 
+  deploy_to_where = var.deploy_to_where
 }

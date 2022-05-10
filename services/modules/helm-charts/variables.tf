@@ -7,6 +7,7 @@ variable "region" {}
 variable "master_auth" {}
 variable "token" {}
 variable "docker_hub_repository" {}
+variable "deploy_to_where" {}
 
 variable "guardian_access_token_secret" {}
 variable "guardian_topic_id" {}

@@ -1,4 +1,10 @@
 # Guardian Terraform
+![terraform](https://badgen.net/badge/icon/terraform?icon=terraform&label)
+![terraform](https://img.shields.io/badge/Terraform-1.1.8-green)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Tymlez/guardian-terraform/graphs/commit-activity)
+![Maintainer](https://img.shields.io/badge/maintainer-tymlez-blue)
+![LastCommit](https://badgen.net/github/last-commit/Tymlez/guardian-terraform)
+![Licence](https://badgen.net/github/license/Tymlez/guardian-terraform)
 
 *Supports single command deployment of the Guardian to AWS / GCP*
 
@@ -45,6 +51,7 @@ Until then you can apply the helm charts from `services/modules/helm-charts/char
 ## Destroy steps
 
 - On GCP it should be as simple as  `cd infra && terraform destroy -var-file=../vars.auto.tfvars`
+  (errors might occur around the API services but these can be ignored)
 - On AWS you have to manually delete the Load Balancer that EKS created (it does this outside of Terraform 
 via the Helm charts meaning Terraform cannot track it in the state file which is wildly unhelpful)
 - Then you can destroy with `cd infra && terraform destroy -var-file=../vars.auto.tfvars`
@@ -55,7 +62,22 @@ When destroyed I recommend removing all plan and state files on your local machi
 
 ## Things to note & Caveats
 
-GCP is the preferred deployment platform for this repo, trust us when we say 
-EKS sounds like it is all singing and all dancing but it is quite possibly the worst implementation
-of Kubernetes I have ever seen.
+GCP is the preferred deployment platform for this repo, GKE Autopilot just works,
+and it is very low drama with excellent debugging and connectivity tools on GCP.
+
+EKS sounds like it is all singing and all dancing, but it is quite possibly the worst implementation
+of Kubernetes I have ever seen, everything has a caveat or an additional piece of complexity.
+
+There are numerous problems associated with EKS that are documented in the code
+(for example, it is currently not possible to deploy Fargate profiles in EKS via Terraform), 
+where possible I have added supporting documentation as to when this will be feasible.
+
+## Testing
+
+Terraform is declarative and whilst there are some methods to develop unit tests in Terraform they are 
+often used to ensure that user input is tested and rather than the code is correct. 
+Most problems in Terraform stem from the Upstream providers which are often not in sync with the clouds,
+this is not something that Unit tests can provide coverage for.
+
+
 

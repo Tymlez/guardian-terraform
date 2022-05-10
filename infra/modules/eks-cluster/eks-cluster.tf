@@ -80,15 +80,14 @@ module "eks" {
   # You require a node group to schedule coredns which is critical for running correctly internal DNS.
   # If you want to use only fargate you must follow docs `(Optional) Update CoreDNS`
   # available under https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html
+  # This cannot be done via Terraform right now unless you create your own CoreDNS image and use it.
   eks_managed_node_groups = {
 
     green = {
       min_size     = 1
       max_size     = 3
-      desired_size = 2
+      desired_size = 1
 
-      #      ami_type       = "AL2_ARM_64"
-      #      instance_types = ["t4g.xlarge"]
       instance_types = ["t3.xlarge"]
       capacity_type  = "SPOT"
     }
