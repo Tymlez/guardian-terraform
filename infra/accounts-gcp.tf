@@ -1,6 +1,6 @@
 provider "google" {
-  project = var.gcp_project_id
-  region  = var.gcp_region
+  project     = var.gcp_project_id
+  region      = var.gcp_region
   credentials = var.gcp_service_account
 }
 
@@ -11,7 +11,7 @@ locals {
 resource "google_project_service" "cloudresourcemanager-service" {
   project = var.gcp_project_id
   service = "cloudresourcemanager.googleapis.com"
-  count = local.build_gcp
+  count   = local.build_gcp
 
   timeouts {
     create = "30m"
@@ -22,7 +22,7 @@ resource "google_project_service" "cloudresourcemanager-service" {
 resource "google_project_service" "serviceusage-service" {
   project = var.gcp_project_id
   service = "serviceusage.googleapis.com"
-  count = local.build_gcp
+  count   = local.build_gcp
 
   timeouts {
     create = "30m"
@@ -36,7 +36,7 @@ resource "google_project_service" "serviceusage-service" {
 resource "google_project_service" "servicecontrol-service" {
   project = var.gcp_project_id
   service = "servicecontrol.googleapis.com"
-  count = local.build_gcp
+  count   = local.build_gcp
 
   timeouts {
     create = "30m"
@@ -50,7 +50,7 @@ resource "google_project_service" "servicecontrol-service" {
 resource "google_project_service" "compute-service" {
   project = var.gcp_project_id
   service = "compute.googleapis.com"
-  count = local.build_gcp
+  count   = local.build_gcp
 
   timeouts {
     create = "30m"
@@ -64,7 +64,7 @@ resource "google_project_service" "compute-service" {
 resource "google_project_service" "iam-service" {
   project = var.gcp_project_id
   service = "iam.googleapis.com"
-  count = local.build_gcp
+  count   = local.build_gcp
 
   timeouts {
     create = "30m"
@@ -77,7 +77,7 @@ resource "google_project_service" "iam-service" {
 resource "google_project_service" "autoscaling-service" {
   project = var.gcp_project_id
   service = "autoscaling.googleapis.com"
-  count = local.build_gcp
+  count   = local.build_gcp
 
   timeouts {
     create = "30m"

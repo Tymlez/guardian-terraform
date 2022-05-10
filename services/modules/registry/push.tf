@@ -6,7 +6,7 @@ data "external" "hash" {
 # Build and push the Docker image whenever the hash changes
 resource "null_resource" "push" {
   triggers = {
-   hash = data.external.hash.result["hash"]
+    hash = data.external.hash.result["hash"]
   }
 
   provisioner "local-exec" {

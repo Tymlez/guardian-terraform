@@ -1,8 +1,8 @@
 data "github_release" "guardian" {
-    repository  = "guardian"
-    owner       = "hashgraph"
-    retrieve_by = var.guardian_version != "" ? "tag" : "latest"
-    release_tag = var.guardian_version != "" ? var.guardian_version : ""
+  repository  = "guardian"
+  owner       = "hashgraph"
+  retrieve_by = var.guardian_version != "" ? "tag" : "latest"
+  release_tag = var.guardian_version != "" ? var.guardian_version : ""
 }
 
 #locals {
@@ -27,13 +27,13 @@ data "external" "version" {
   program = ["bash", "${path.root}/modules/guardian/getVersion.sh", "${path.root}/modules/guardian/repo"]
 }
 
-resource null_resource gh_clone {
+resource "null_resource" "gh_clone" {
 
   triggers = {
     clone = data.external.version.result["result"]
   }
 
-  provisioner local-exec {
+  provisioner "local-exec" {
     command = "rm -rf ${path.root}/modules/guardian/repo && git clone git@github.com:hashgraph/guardian.git --branch ${var.guardian_version != "" ? var.guardian_version : "main"} ${path.root}/modules/guardian/repo"
   }
 
