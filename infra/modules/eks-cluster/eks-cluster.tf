@@ -84,12 +84,12 @@ module "eks" {
   eks_managed_node_groups = {
 
     green = {
-      min_size     = 1
-      max_size     = 3
-      desired_size = 1
+      min_size     = var.eks_config.min_size
+      max_size     = var.eks_config.max_size
+      desired_size = var.eks_config.desired_size
 
-      instance_types = ["t3.xlarge"]
-      capacity_type  = "SPOT"
+      instance_types = var.eks_config.instance_types
+      capacity_type  = var.eks_config.capacity_type
     }
   }
 

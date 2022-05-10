@@ -70,6 +70,10 @@ variable "cluster_name" {
   description = "cluster_name"
 }
 
+variable "eks_config" {
+  type = any
+}
+
 variable "docker_hub_username" {}
 variable "docker_hub_password" {}
 variable "docker_hub_repository" {}

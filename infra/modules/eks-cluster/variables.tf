@@ -12,6 +12,10 @@ variable "cluster_name" {
   description = "cluster_name"
 }
 
+variable "eks_config" {
+  type = any
+}
+
 variable "aws_user_eks" {
   description = "User to add to EKS"
 }

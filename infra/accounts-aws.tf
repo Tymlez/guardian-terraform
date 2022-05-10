@@ -34,4 +34,5 @@ module "eks_cluster" {
 
   aws_user_eks = var.aws_user_eks
   aws_role_eks = var.aws_role_eks
+  eks_config   = var.eks_config
 }
