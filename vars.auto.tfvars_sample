@@ -1,28 +1,57 @@
 # It is recommended to bring these variables
-# into Terraform Cloud so they can be secured
+# into Terraform Cloud and use a remote backend so they can be secured properly
 
+# If you change this it will destroy everything on whatever the other cloud is
+deploy_to_where = "aws" #gcp | aws
 
 #Core Authentication
-aws_access_key_id=""
-aws_secret_access_key=""
+aws_access_key_id     = "AKIA..."
+aws_secret_access_key = ""
 
-gcp_service_account=""
-gcp_project_id=""
-gcp_region=""
+#Do you need to grant a particular user access to the EKS cluster (might be different from the credentials above?)
+#This is required if you are using AWS SSO to manage your users
+#Leave blank if not.
+aws_user_eks = "arn:aws:iam::123456789123:user/AWSReservedSSO_AdministratorAccess_b036e5d0c56f4c3b/my.name@tymlez.com"
+aws_role_eks = "arn:aws:iam::123456789123:role/AWSReservedSSO_AdministratorAccess_b036e5d0c56f4c3b"
 
-docker_hub_username=""
-docker_hub_password=""
+#remove newlines from Service Account JSON and escape
+#this service account should have access to everything you need to create via Terraform
+gcp_service_account = "{\"client_id\": \"...\"token_uri\": \"https://oauth2.googleapis.com/token\"}"
+gcp_project_id      = "my-project-240712"
+gcp_region          = "australia-southeast1"
+
+#docker hub credentials for pushing to the registry
+#this will be replaced once envision push images
+docker_hub_token      = ""
+docker_hub_username   = ""
+docker_hub_password   = ""
+docker_hub_repository = ""
 
 #Guardian Requirements
-guardian_operator_id=""
-guardian_operator_key=""
-guardian_ipfs_key=""
-guardian_topic_id=""
-guardian_access_token_secret="supersecretsauce"
+guardian_operator_id         = ""
+guardian_operator_key        = ""
+guardian_ipfs_key            = ""
+guardian_topic_id            = ""
+guardian_access_token_secret = ""
+guardian_static_ip           = ""
+guardian_version             = "v1.2.1" #leave blank for latest
 
-#TF Vars
-stage="dev"
-app_name="TYMLEZ"
+#VPC Requirements
+vpc_name = "dev" #must not exist
+vpc_cidr = "10.0.0.0/16"
+
+
+
+#please note - our FQDN convention is:
+#cluster_name.stage.app_name.tld
+#e.g: guardian.dev.testing.tymlez.com
+
+
+stage = "dev"
+
+app_name     = "testing" #or customer name
+cluster_name = "guardian-cluster"
+tld          = "tymlez.com"
 
 
 
