@@ -1,6 +1,8 @@
 variable "cluster_name" {}
 variable "cluster_id" {}
 variable "cluster_endpoint" {}
+variable "vpc_name" {}
+variable "vpc_cidr" {}
 variable "region" {}
 variable "master_auth" {}
 variable "token" {}

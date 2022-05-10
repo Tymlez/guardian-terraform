@@ -4,49 +4,49 @@ resource "aws_kms_key" "eks" {
   enable_key_rotation     = true
 }
 
-#resource "aws_security_group" "eks" {
-#  name_prefix = var.cluster_name
-#  description = "EKS cluster security group."
-#  vpc_id = var.vpc_id
-#
-#  tags = {
-#    "Name" = "${var.cluster_name}-eks_cluster_sg"
-#    }
-#}
-
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
 
-  cluster_name                    = var.cluster_name
-  cluster_version                 = "1.22"
+  cluster_name    = var.cluster_name
+  cluster_version = "1.22"
+
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
 
   vpc_id     = var.vpc_id
   subnet_ids = var.subnets
 
+  #Do not let this module create a security group for you
+  #EKS networking is 💩💩💩 and wont detect your svc ports
+
+  create_cluster_security_group = false
+  create_node_security_group    = false
+
+  cluster_security_group_id = aws_security_group.fully_open.id
+  node_security_group_id    = aws_security_group.fully_open.id
+
   aws_auth_fargate_profile_pod_execution_role_arns = [aws_iam_role.eks-cluster.arn]
 
-#  create_aws_auth_configmap = true
+  #  create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
   aws_auth_users = [
     {
-      userarn = var.aws_user_eks
+      userarn  = var.aws_user_eks
       username = "admin"
-      groups = ["system:masters"]
+      groups   = ["system:masters"]
     },
     {
-      userarn = var.aws_user_eks
+      userarn  = var.aws_user_eks
       username = "AWSAdministratorAccess"
-      groups = ["system:masters"]
+      groups   = ["system:masters"]
     },
   ]
 
   aws_auth_roles = [
-  {
-      rolearn = aws_iam_role.eks-cluster.arn
+    {
+      rolearn  = aws_iam_role.eks-cluster.arn
       username = "admin"
-      groups = ["system:masters"]
+      groups   = ["system:masters"]
     },
     {
       rolearn  = var.aws_role_eks
@@ -87,8 +87,8 @@ module "eks" {
       max_size     = 3
       desired_size = 2
 
-#      ami_type       = "AL2_ARM_64"
-#      instance_types = ["t4g.xlarge"]
+      #      ami_type       = "AL2_ARM_64"
+      #      instance_types = ["t4g.xlarge"]
       instance_types = ["t3.xlarge"]
       capacity_type  = "SPOT"
     }
@@ -102,27 +102,27 @@ module "eks" {
   # Additionally coredns does not run on Fargate without patching and this is currently not working via Terraform
   # This means nodes on Fargate and the Managed Node cannot talk to each other 💩
 
-#  fargate_profiles = {
-#    default = {
-#      name = "default"
-#      selectors = [
-#        {
-#          namespace = "default",
-#          labels = {
-#            aws-schedule = "fargate"
-#          }
-#        }
-#      ]
-#
-#      tags = {
-#        Owner = "default"
-#      }
-#
-#      timeouts = {
-#        create = "20m"
-#        delete = "20m"
-#      }
-#    }
-#  }
+  #  fargate_profiles = {
+  #    default = {
+  #      name = "default"
+  #      selectors = [
+  #        {
+  #          namespace = "default",
+  #          labels = {
+  #            aws-schedule = "fargate"
+  #          }
+  #        }
+  #      ]
+  #
+  #      tags = {
+  #        Owner = "default"
+  #      }
+  #
+  #      timeouts = {
+  #        create = "20m"
+  #        delete = "20m"
+  #      }
+  #    }
+  #  }
 }
 

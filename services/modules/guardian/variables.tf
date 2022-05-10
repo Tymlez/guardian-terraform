@@ -4,13 +4,13 @@
 #}
 
 variable "stage" {
-    type = string
-    description = "e.g., dev, prod"
+  type        = string
+  description = "e.g., dev, prod"
 }
 
 variable "app_name" {
-    type = string
-    description = "e.g., cohort, uon"
+  type        = string
+  description = "e.g., cohort, uon"
 }
 
 variable "guardian_operator_id" {

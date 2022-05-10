@@ -14,9 +14,12 @@ variable "aws_region" {
 }
 
 variable "aws_vpc_azs" {
-  type = list
+  type    = list(any)
   default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }
+
+variable "vpc_name" {}
+variable "vpc_cidr" {}
 
 variable "aws_user_eks" {
   description = "User to add to EKS"
