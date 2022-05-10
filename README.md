@@ -12,15 +12,24 @@ This repo is a complete Terraform setup for the deployment of the Guardian from 
 
 ## Steps for all Clouds
 - Prepare credentials for Docker Hub
+- Install terraform (https://www.terraform.io/downloads.html)
 - We highly recommend using Terraform Cloud for production deployments as it handles secrets management and multiple states better than the local provisioner described in this guide
 
-## Steps for deployment to GCP (GKE)
+## Setup for deployment to GCP (GKE)
+On GCP we deploy to GKE using an autopilot cluster, this is the simplest way to get started and leaves a lot of room
+for customisation to be made according to requirements.
+
+Steps:
 - Ensure that `deploy_to_where = "gcp"` is set in the `vars.auto.tfvars` file
 - Create a service account with Editor Privileges
 - Enable Cloud Resource Manager API manually (This apparently cannot be done via Terraform) by visiting https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview or do `gcloud services enable cloudresourcemanager.googleapis.com`
 
  
-## Steps for deployment to AWS (EKS)
+## Setup for deployment to AWS (EKS)
+On AWS we deploy to EKS using a managed node group of 2 t3a.xlarge SPOT instances by default (we recommend a larger setup for Production to handle SPOT reclamation)
+Fargate is not able to be used right now due to issues with EBS, Zones and Terraform.
+
+Steps:
 - Ensure that `deploy_to_where = "aws"` is set in the `vars.auto.tfvars` file
 - Create an IAM User with Admin Privileges
 
@@ -77,7 +86,20 @@ where possible I have added supporting documentation as to when this will be fea
 Terraform is declarative and whilst there are some methods to develop unit tests in Terraform they are 
 often used to ensure that user input is tested and rather than the code is correct. 
 Most problems in Terraform stem from the Upstream providers which are often not in sync with the clouds,
-this is not something that Unit tests can provide coverage for.
+this is not something that Unit tests can provide coverage for and therefore this is not a priority for us now.
 
+## Contributing
+
+All contributions are welcome, please open an issue if you have any questions or suggestions.
+The primary goal of this repo is to provide a starting point for getting the Guardian up and running in a somewhat production
+friendly manner, it will not fit every use-case but if your changes would benefit the community please consider contributing back to this repo!
+
+Items in particular we would love help with:
+- Azure Integration (AKS)
+- Alibaba Integration (ACK)
+- Nomad Integration
+- Hashicorp Vault Integration
+- Unit tests
+- General updates as Terraform matures
 
 
