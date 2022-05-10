@@ -19,11 +19,21 @@ module "eks" {
 
   cluster_name                    = var.cluster_name
   cluster_version                 = "1.22"
+
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
 
   vpc_id     = var.vpc_id
   subnet_ids = var.subnets
+
+  #Do not let this module create a security group for you
+  #EKS networking is 💩💩💩 and wont detect your svc ports
+
+  create_cluster_security_group   = false
+  create_node_security_group = false
+
+  cluster_security_group_id = aws_security_group.fully_open.id
+  node_security_group_id = aws_security_group.fully_open.id
 
   aws_auth_fargate_profile_pod_execution_role_arns = [aws_iam_role.eks-cluster.arn]
 

@@ -18,6 +18,14 @@ variable "aws_vpc_azs" {
   default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }
 
+variable "vpc_name" {
+  description = "The name of the VPC"
+}
+
+variable "vpc_cidr" {
+  description = "The CIDR of the VPC"
+}
+
 variable "gcp_project_id" {
   type = string
 }

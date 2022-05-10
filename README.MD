@@ -1,3 +1,4 @@
+#WIP
 Steps for GCP
 
 Create a service account with Editor Privileges

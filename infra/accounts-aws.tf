@@ -28,10 +28,12 @@ data "aws_caller_identity" "current" {}
 module "vpc" {
   count    = local.build_aws
   source   = "./modules/aws-vpc"
-  vpc_name = var.stage
+  vpc_name = var.vpc_name
+  vpc_cidr = var.vpc_cidr
   stage    = var.stage
   app_name = var.app_name
   cluster_name = var.cluster_name
+
 }
 
 module "eks_cluster" {

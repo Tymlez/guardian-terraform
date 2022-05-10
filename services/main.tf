@@ -7,7 +7,7 @@ data "aws_region" "current" {}
 #}
 #get the cluster details from infra
 #Do not fuck with this if you try and create them in the same state it will fail (although not immediately)
-#Kubernetes & Helm on Terraform is a pain in the ass
+#Kubernetes & Helm on Terraform on AWS is a pain in the ass
 #https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1234
 #https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1744
 #https://github.com/hashicorp/terraform-provider-kubernetes/issues/1307#issuecomment-873089000

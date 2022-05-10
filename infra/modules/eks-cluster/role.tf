@@ -18,7 +18,7 @@ resource "aws_iam_role" "eks-cluster" {
   )
   force_detach_policies = false
   max_session_duration  = 3600
-  name                  = "eks-cluster-ServiceRole"
+  name_prefix           = "eks-cluster-ServiceRole"
   path                  = "/"
   tags = {
     "Name" = "eks-cluster/ServiceRole"

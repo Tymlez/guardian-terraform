@@ -91,12 +91,14 @@ resource "google_project_service" "autoscaling-service" {
 module "platform_vpc_gcp" {
   count          = local.build_gcp
   source         = "./modules/gcp-vpc"
-  vpc_name       = "platform-vpc"
+  vpc_name       = var.vpc_name
+  vpc_cidr       = var.vpc_cidr
   subnet_name    = "platform-subnet"
   region         = var.gcp_region
   gcp_project_id = var.gcp_project_id
 
   depends_on = [google_project_service.cloudresourcemanager-service]
+
 }
 
 module "gke_cluster" {

@@ -2,6 +2,10 @@ variable "vpc_name" {
   description = "Name of the VPC"
 }
 
+variable "vpc_cidr" {
+  description = "CIDR of the VPC"
+}
+
 variable "stage" {
   description = "Environment (Stage)"
 }

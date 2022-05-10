@@ -59,9 +59,12 @@ module "guardian" {
 module "helm-charts" {
   source = "./modules/helm-charts"
 
+  vpc_name = var.vpc_name
+  vpc_cidr = var.vpc_cidr
   cluster_name = var.cluster_name
   cluster_id = local.cluster_id
   cluster_endpoint = local.cluster_endpoint
+
   master_auth = local.master_auth
   token = data.google_client_config.current.access_token
   docker_hub_repository = var.docker_hub_repository
@@ -79,5 +82,7 @@ module "helm-charts" {
     module.guardian,
 #    module.kubernetes
   ]
+
+
 
 }
