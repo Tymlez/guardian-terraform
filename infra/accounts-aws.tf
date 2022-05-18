@@ -36,3 +36,13 @@ module "eks_cluster" {
   aws_role_eks = var.aws_role_eks
   eks_config   = var.eks_config
 }
+
+module "aws-firewall" {
+  count            = local.build_aws
+  source           = "./modules/aws-firewall"
+  firewall_default = var.firewall_default
+  stage            = var.stage
+  vpc_id           = module.vpc.0.vpc_id
+  whitelisted_ips  = var.whitelisted_ips
+  subnet_ids       = module.vpc.0.private_subnet_ids
+}

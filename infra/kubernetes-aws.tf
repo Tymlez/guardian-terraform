@@ -15,12 +15,12 @@ data "google_container_cluster" "cluster" {
 
 data "aws_eks_cluster" "cluster" {
   count = local.build_aws
-  name = module.eks_cluster.0.cluster_id
+  name  = module.eks_cluster.0.cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
   count = local.build_aws
-  name = module.eks_cluster.0.cluster_id
+  name  = module.eks_cluster.0.cluster_id
 }
 
 provider "kubernetes" {

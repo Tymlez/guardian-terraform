@@ -53,5 +53,9 @@ app_name     = "testing" #or customer name
 cluster_name = "guardian-cluster"
 tld          = "tymlez.com"
 
+firewall_default = "DENY"
+whitelisted_ips = []
 
+#these can be ignored if using AWS or unless you change your CIDRs for the VPC in GCP
+gcp_local_whitelisted_ips = [ "10.0.0.0/8", "192.168.0.0/16" ]
 

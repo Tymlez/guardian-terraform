@@ -77,6 +77,10 @@ variable "eks_config" {
   type = any
 }
 
+variable "firewall_default" {}
+variable "whitelisted_ips" {}
+variable "gcp_local_whitelisted_ips" {}
+
 variable "docker_hub_username" {}
 variable "docker_hub_password" {}
 variable "docker_hub_repository" {}

@@ -111,3 +111,12 @@ module "gke_cluster" {
 
   depends_on = [google_project_service.cloudresourcemanager-service]
 }
+
+module "gcp_firewall" {
+  count                     = local.build_gcp
+  source                    = "./modules/gcp-firewall"
+  firewall_default          = var.firewall_default
+  gcp_local_whitelisted_ips = var.gcp_local_whitelisted_ips
+  vpc_name                  = var.vpc_name
+  whitelisted_ips           = var.whitelisted_ips
+}
