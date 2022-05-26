@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "guardian-auth-service.fullname" . }}-{{ .Release.Revision }}
 data:  
-  MQ_ADDRESS: guardian-message-broker-{{ .Release.Revision }}
+  MQ_ADDRESS: message-broker
   DB_HOST: mongodb
   DB_DATABASE: auth_db
   SERVICE_CHANNEL: auth-service

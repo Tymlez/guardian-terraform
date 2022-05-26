@@ -1,3 +1,6 @@
+variable "aws_access_key_id" {}
+variable "aws_secret_access_key" {}
+
 variable "deploy_to_where" {
   description = "Where are we deploying this? Options: aws | gcp"
 }
@@ -76,5 +79,5 @@ variable "eks_config" {
 
 variable "docker_hub_username" {}
 variable "docker_hub_password" {}
-variable "docker_hub_repository" {}
+variable "docker_repository" {}
 variable "tld" {}

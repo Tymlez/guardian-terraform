@@ -11,7 +11,6 @@
 This repo is a complete Terraform setup for the deployment of the Guardian from hashgraph/guardian.
 
 ## Steps for all Clouds
-- Prepare credentials for Docker Hub
 - Install terraform (https://www.terraform.io/downloads.html)
 - We highly recommend using Terraform Cloud for production deployments as it handles secrets management and multiple states better than the local provisioner described in this guide
 
@@ -32,6 +31,12 @@ Fargate is not able to be used right now due to issues with EBS, Zones and Terra
 Steps:
 - Ensure that `deploy_to_where = "aws"` is set in the `vars.auto.tfvars` file
 - Create an IAM User with Admin Privileges
+- Install AWS CLi and do `aws configure` - or -
+- Create `[default]` profile in `~/.aws/credentials` with the following:
+    - Access Key ID
+    - Secret Access Key
+    - Region
+- On Terraform cloud simply ensure that `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` *environment* Variables are set and it will use them
 
 ## Steps for deployment to Azure (AKS)
 Terraform coming soon.

@@ -10,14 +10,23 @@ locals {
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
-  count        = local.build_aws
-  source       = "./modules/aws-vpc"
-  vpc_name     = var.vpc_name
-  vpc_cidr     = var.vpc_cidr
-  stage        = var.stage
-  app_name     = var.app_name
-  cluster_name = var.cluster_name
+  count            = local.build_aws
+  source           = "./modules/aws-vpc"
+  vpc_name         = var.vpc_name
+  vpc_cidr         = var.vpc_cidr
+  stage            = var.stage
+  app_name         = var.app_name
+  cluster_name     = var.cluster_name
+  firewall_default = var.firewall_default
+  whitelisted_ips  = var.whitelisted_ips
+}
 
+module "aws-firewall" {
+  count            = local.build_aws
+  source           = "./modules/aws-firewall"
+  stage             = var.stage
+  firewall_default = var.firewall_default
+  whitelisted_ips = var.whitelisted_ips
 }
 
 module "eks_cluster" {
@@ -37,12 +46,3 @@ module "eks_cluster" {
   eks_config   = var.eks_config
 }
 
-module "aws-firewall" {
-  count            = local.build_aws
-  source           = "./modules/aws-firewall"
-  firewall_default = var.firewall_default
-  stage            = var.stage
-  vpc_id           = module.vpc.0.vpc_id
-  whitelisted_ips  = var.whitelisted_ips
-  subnet_ids       = module.vpc.0.private_subnet_ids
-}

@@ -1,18 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "guardian-message-broker.fullname" . }}
+  name: {{ include "guardian-api-docs.fullname" . }}
   labels:
-    {{- include "guardian-message-broker.labels" . | nindent 4 }}
+    {{- include "guardian-api-docs.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "guardian-message-broker.selectorLabels" . | nindent 6 }}
-  strategy: 
-    type: Recreate      
+      {{- include "guardian-api-docs.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "guardian-message-broker.selectorLabels" . | nindent 8 }}
+        {{- include "guardian-api-docs.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      # serviceAccountName: {{ include "guardian-message-broker.serviceAccountName" . }}
+      serviceAccountName: {{ include "guardian-api-docs.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -36,19 +34,17 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: 'p7500'
-              containerPort: 7500
+            - name: http
+              containerPort: 80
               protocol: TCP
           livenessProbe:
-            exec:
-              command:
-              - echo
-              - $HOME
+            httpGet:
+              path: /
+              port: http
           readinessProbe:
-            exec:
-              command:
-              - echo
-              - $HOME
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

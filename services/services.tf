@@ -24,7 +24,7 @@ module "guardian" {
   cluster_name = var.cluster_name
   tld          = var.tld
 
-  docker_hub_repository        = var.docker_hub_repository
+  docker_repository            = var.docker_repository
   guardian_access_token_secret = var.guardian_access_token_secret
   guardian_ipfs_key            = var.guardian_ipfs_key
   guardian_operator_id         = var.guardian_operator_id
@@ -37,53 +37,36 @@ module "guardian" {
   token                        = data.google_client_config.current.access_token
 }
 
-#module "guardian-repo" {
-#  source = "./modules/guardian-repo"
-#  guardian_version = var.guardian_version
-#}
-
-#module "registry" {
-#  source = "./modules/registry"
-#  docker_hub_password   = var.docker_hub_password
-#  docker_hub_repository = var.docker_hub_repository
-#  docker_hub_username   = var.docker_hub_username
-#
-#  depends_on = [module.guardian-repo]
-#}
-#module "kubernetes" {
-#  source = "./modules/kubernetes"
-#  cluster_name = var.cluster_name
-#  region = local.region
-#}
-
 module "helm-charts" {
   source = "./modules/helm-charts"
 
-  vpc_name         = var.vpc_name
-  vpc_cidr         = var.vpc_cidr
-  cluster_name     = var.cluster_name
-  cluster_id       = local.cluster_id
-  cluster_endpoint = local.cluster_endpoint
-
+  vpc_name                     = var.vpc_name
+  vpc_cidr                     = var.vpc_cidr
+  cluster_name                 = var.cluster_name
+  cluster_id                   = local.cluster_id
+  cluster_endpoint             = local.cluster_endpoint
+  deploy_to_where              = var.deploy_to_where
   master_auth                  = local.master_auth
   token                        = data.google_client_config.current.access_token
-  docker_hub_repository        = var.docker_hub_repository
+  docker_repository            = var.docker_repository
   guardian_access_token_secret = var.guardian_access_token_secret
   guardian_ipfs_key            = var.guardian_ipfs_key
   guardian_operator_id         = var.guardian_operator_id
   guardian_operator_key        = var.guardian_operator_key
   guardian_topic_id            = var.guardian_topic_id
+  guardian_initial_balance     = var.guardian_initial_balance
+  guardian_max_transaction_fee = var.guardian_max_transaction_fee
+  guardian_version             = var.guardian_version
   region                       = local.region
 
   depends_on = [
-    #    module.registry,
     data.google_container_cluster.cluster,
-    #    module.guardian-repo,
     module.guardian,
-    #    module.kubernetes
+
   ]
 
 
 
-  deploy_to_where = var.deploy_to_where
+
+
 }

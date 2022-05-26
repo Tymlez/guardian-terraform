@@ -66,12 +66,17 @@ variable "guardian_version" {
   type = string
 }
 
+variable "guardian_max_transaction_fee" {
+  type = number
+}
+
+variable "guardian_initial_balance" {
+  type = number
+}
+
 variable "cluster_name" {
   description = "Cluster Name"
 }
 
-
-variable "docker_hub_username" {}
-variable "docker_hub_password" {}
-variable "docker_hub_repository" {}
+variable "docker_repository" {}
 variable "tld" {}

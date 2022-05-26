@@ -43,7 +43,7 @@ variable "docker_hub_password" {
   type        = string
 }
 
-variable "docker_hub_repository" {
+variable "docker_repository" {
   description = "Your docker hub repository"
   type        = string
 }

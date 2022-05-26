@@ -6,7 +6,7 @@ variable "vpc_cidr" {}
 variable "region" {}
 variable "master_auth" {}
 variable "token" {}
-variable "docker_hub_repository" {}
+variable "docker_repository" {}
 variable "deploy_to_where" {}
 
 variable "guardian_access_token_secret" {}
@@ -14,3 +14,6 @@ variable "guardian_topic_id" {}
 variable "guardian_operator_id" {}
 variable "guardian_operator_key" {}
 variable "guardian_ipfs_key" {}
+variable "guardian_version" {}
+variable "guardian_max_transaction_fee" {}
+variable "guardian_initial_balance" {}

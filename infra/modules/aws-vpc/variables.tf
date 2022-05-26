@@ -22,3 +22,6 @@ variable "app_name" {
 variable "cluster_name" {
   description = "cluster_name"
 }
+
+variable "firewall_default" {}
+variable "whitelisted_ips" {}

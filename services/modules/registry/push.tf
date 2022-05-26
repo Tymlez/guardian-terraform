@@ -10,7 +10,7 @@ resource "null_resource" "push" {
   }
 
   provisioner "local-exec" {
-    command     = "${coalesce(var.push_script, "${path.module}/push.sh")} '${var.source_path}' ${var.docker_compose_cmd} ${var.docker_hub_username} '${var.docker_hub_password}' '${var.docker_hub_repository}'"
+    command     = "${coalesce(var.push_script, "${path.module}/push.sh")} '${var.source_path}' ${var.docker_compose_cmd} ${var.docker_hub_username} '${var.docker_hub_password}' '${var.docker_repository}'"
     interpreter = ["bash", "-c"]
   }
 }

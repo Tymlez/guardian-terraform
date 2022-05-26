@@ -25,7 +25,7 @@ gcp_region          = "australia-southeast1"
 docker_hub_token      = ""
 docker_hub_username   = ""
 docker_hub_password   = ""
-docker_hub_repository = ""
+docker_repository = ""
 
 #Guardian Requirements
 guardian_operator_id         = ""
@@ -34,7 +34,9 @@ guardian_ipfs_key            = ""
 guardian_topic_id            = ""
 guardian_access_token_secret = ""
 guardian_static_ip           = ""
-guardian_version             = "v1.2.1" #leave blank for latest
+guardian_version             = "2.1.0" #or "latest"
+max_transaction_fee          = "10"
+initial_balance              = "30"
 
 #VPC Requirements
 vpc_name = "dev" #must not exist
@@ -53,7 +55,7 @@ app_name     = "testing" #or customer name
 cluster_name = "guardian-cluster"
 tld          = "tymlez.com"
 
-firewall_default = "DENY"
+firewall_default = "ALLOW"
 whitelisted_ips = []
 
 #these can be ignored if using AWS or unless you change your CIDRs for the VPC in GCP

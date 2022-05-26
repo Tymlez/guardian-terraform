@@ -6,38 +6,33 @@ services:
     expose:
       - 27017
 
-  message-broker: 
-    build:
-      context: ./repo
-      dockerfile: ./message-broker/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-message-broker:latest
+  api-docs:
+      image: ${DOCKER_REPOSITORY}/api-docs:latest
     expose:
-      - 7500
-      - 3003
+      - 3001
+
+  message-broker:
+    image: nats
+    expose:
+      - 4222
+    ports:
+      - '8222:8222'
+    command: '--http_port 8222'
 
   logger-service:
-    build:
-      context: ./repo
-      dockerfile: ./logger-service/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-logger-service:latest
+    image: ${DOCKER_REPOSITORY}/logger-service:latest
     depends_on:
       - message-broker
 
   auth-service:
-    build:
-      context: ./repo
-      dockerfile: ./auth-service/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-auth-service:latest
+    image: ${DOCKER_REPOSITORY}/auth-service:latest
     depends_on:
       - mongo
       - message-broker
       - logger-service
 
   api-gateway:
-    build:
-      context: ./repo
-      dockerfile: ./api-gateway/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-api-gateway:latest
+    image: ${DOCKER_REPOSITORY}/api-gateway:latest
     expose:
       - 3002
     depends_on:
@@ -48,10 +43,7 @@ services:
       - logger-service
 
   guardian-service:
-    build:
-      context: ./repo
-      dockerfile: ./guardian-service/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-guardian-service:latest
+    image: ${DOCKER_REPOSITORY}/guardian-service:latest
     depends_on:
       - mongo
       - message-broker
@@ -59,10 +51,7 @@ services:
       - logger-service
 
   ipfs-client:
-    build:
-      context: ./repo
-      dockerfile: ./ipfs-client/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-ipfs-client:latest
+    image: ${DOCKER_REPOSITORY}/ipfs-client:latest
     ports:
       - "5001:5001"
       - "5002:5002"
@@ -74,19 +63,26 @@ services:
       - message-broker
       - logger-service
 
+#  mrv-sender:
+#    image: ${DOCKER_REPOSITORY}/mrv-sender:latest
+#    expose:
+#      - 3005
+
+  topic-viewer:
+    image: ${DOCKER_REPOSITORY}/topic-viewer:latest
+    expose:
+      - 3006
+
   web-proxy:
-    build:
-      context: ./repo
-      dockerfile: ./web-proxy/Dockerfile
-    image: ${DOCKER_HUB_REPOSITORY}/guardian-web-proxy:latest
+    image: ${DOCKER_REPOSITORY}/frontend:latest
     ports:
       - "3000:80"
     depends_on:
       - guardian-service
       - auth-service
       - api-gateway
-      
-
+      - api-docs
+#      - mrv-sender
 volumes:
   mongo:
   # volume-guardian-service:

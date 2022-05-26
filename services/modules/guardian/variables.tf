@@ -42,7 +42,7 @@ variable "guardian_version" {
   description = "The version of the guardian to deploy from hashgraph/guardian"
 }
 
-variable "docker_hub_repository" {}
+variable "docker_repository" {}
 variable "tld" {}
 variable "cluster_name" {}
 variable "cluster_endpoint" {}
