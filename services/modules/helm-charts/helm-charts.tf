@@ -15,30 +15,6 @@ resource "helm_release" "mongodb" {
   }
 }
 
-resource "helm_release" "guardian-api-docs" {
-  name       = "guardian-api-docs"
-  chart      = "${path.root}/modules/helm-charts/charts/guardian-api-docs"
-  repository = "${var.docker_repository}/api-docs"
-
-  timeout = "120"
-
-  values = [
-    "${file("${path.root}/modules/helm-charts/charts/guardian-api-docs/values.yaml")}"
-  ]
-
-
-  set {
-    name  = "image.repository"
-    value = "${var.docker_repository}/api-docs"
-  }
-
-  set {
-    name  = "image.tag"
-    value = var.guardian_version
-  }
-  depends_on = [helm_release.mongodb]
-}
-
 resource "helm_release" "guardian-message-broker" {
   name       = "guardian-message-broker"
   chart      = "nats"
@@ -66,30 +42,6 @@ resource "helm_release" "guardian-message-broker" {
 
   depends_on = [helm_release.mongodb]
 }
-
-#resource "helm_release" "guardian-message-broker" {
-#  name       = "guardian-message-broker"
-#  chart      = "${path.root}/modules/helm-charts/charts/guardian-message-broker"
-#  repository = "${var.docker_repository}/message-broker"
-#
-#  timeout = "120"
-#
-#  values = [
-#    "${file("${path.root}/modules/helm-charts/charts/guardian-message-broker/values.yaml")}"
-#  ]
-#
-#
-#  set {
-#    name  = "image.repository"
-#    value = "${var.docker_repository}/message-broker"
-#  }
-#
-#  set {
-#    name  = "image.tag"
-#    value = var.guardian_version
-#  }
-#  depends_on = [helm_release.mongodb]
-#}
 
 resource "helm_release" "guardian-logger-service" {
   name       = "guardian-logger-service"
@@ -190,27 +142,27 @@ resource "helm_release" "guardian-guardian-service" {
 
   set {
     name  = "global.guardian.operatorId"
-    value = var.guardian_operator_id
+    value = coalesce(var.guardian_operator_id, "operatoridfailed")
   }
 
   set {
     name  = "global.guardian.operatorKey"
-    value = var.guardian_operator_key
+    value = coalesce(var.guardian_operator_key, "operatorkeyfailed")
   }
 
   set {
     name  = "global.guardian.topicId"
-    value = var.guardian_topic_id
+    value = coalesce(var.guardian_topic_id, "0.0.0000000")
   }
 
   set {
     name  = "global.guardian.maxTransactionFee"
-    value = var.guardian_max_transaction_fee
+    value = coalesce(var.guardian_max_transaction_fee,0)
   }
 
   set {
     name  = "global.guardian.initialBalance"
-    value = var.guardian_initial_balance
+    value = coalesce(var.guardian_initial_balance,0)
   }
 
   depends_on = [helm_release.guardian-message-broker]
