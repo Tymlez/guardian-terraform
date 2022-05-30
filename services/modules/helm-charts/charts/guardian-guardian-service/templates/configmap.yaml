@@ -10,6 +10,6 @@ data:
   OPERATOR_ID: {{ .Values.global.guardian.operatorId }}
   OPERATOR_KEY: {{ .Values.global.guardian.operatorKey }}
   SCHEMA_TOPIC_ID: {{ .Values.global.guardian.topicId }}
-  MAX_TRANSACTION_FEE: {{ .Values.global.guardian.maxTransactionFee }}
-  INITIAL_BALANCE: {{ .Values.global.guardian.initialBalance }}
+  MAX_TRANSACTION_FEE: {{ .Values.global.guardian.maxTransactionFee | quote }}
+  INITIAL_BALANCE: {{ .Values.global.guardian.initialBalance | quote }}
  

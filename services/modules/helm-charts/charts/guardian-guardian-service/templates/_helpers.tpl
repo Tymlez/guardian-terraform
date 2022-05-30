@@ -48,7 +48,6 @@ Selector labels
 {{- define "guardian-guardian-service.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "guardian-guardian-service.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-aws-schedule: fargate
 {{- end }}
 
 {{/*
