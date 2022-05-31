@@ -80,3 +80,5 @@ variable "cluster_name" {
 
 variable "docker_repository" {}
 variable "tld" {}
+variable "whitelisted_ips" {}
+variable "firewall_default" {}

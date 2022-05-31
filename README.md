@@ -9,6 +9,11 @@
 *Supports single command deployment of the Guardian to AWS / GCP*
 
 This repo is a complete Terraform setup for the deployment of the Guardian from hashgraph/guardian.
+Each deployment is by default limited to IP addresess in the configuration, this is because the guardian UI
+is currently unprotected and secrets can be exposed.
+
+**PLEASE UNDERSTAND THE REQUIREMENTS FOR SECURING THIS PROPERLY BEFORE DEPLOYING PUBLICLY.**
+
 
 ## Steps for all Clouds
 - Install terraform (https://www.terraform.io/downloads.html)
@@ -40,36 +45,34 @@ Steps:
 
 ## Steps for deployment to Azure (AKS)
 Terraform coming soon.
-Until then you can apply the helm charts from `services/modules/helm-charts/charts` directly to an existing AKS Cluster
 
 ## Deployment steps
 
 1. Clone the repo
 2. Copy `vars.auto.tfvars_sample` to `vars.auto.tfvars`
 3. Fill out the details required in `vars.auto.tfvars`
-4. Run `terraform init`
-5. Deploy Infra first
+4. Deploy Infra first
    1. `cd infra`
-   2. `terraform plan -out=infra.plan -var-file=../vars.auto.tfvars`
-   3. `terraform apply infra.plan`
-6. Deploy Services
+   2. `cd aws` or `cd gcp`
+   3. `terraform init`
+   4. `terraform plan -out=infra.plan -var-file=../../vars.auto.tfvars`
+   5. `terraform apply infra.plan`
+5. Deploy Services
    1. `cd services`
-   2. `terraform plan -out=services.plan -var-file=../vars.auto.tfvars`
-   3. `terraform apply services.plan`
-7. Confirm Cluster setup with `kubectl get pods -o wide` 
+   2. `terraform init`
+   3. `terraform plan -out=services.plan -var-file=../vars.auto.tfvars`
+   4. `terraform apply services.plan`
+6. Confirm Cluster setup with `kubectl get pods -o wide` 
    1. On GCP: (https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl)
    2. On AWS: (https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
    3. On AKS: (https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli#connect-to-the-cluster)
-8. Check guardian-service is functioning with `kubectl logs -f <guardian-service-pod-name>`
+7. Check guardian-service is functioning with `kubectl logs -f <guardian-service-pod-name>`
 
 ## Destroy steps
 
-- On GCP it should be as simple as  `cd infra && terraform destroy -var-file=../vars.auto.tfvars`
-  (errors might occur around the API services but these can be ignored)
-- On AWS you have to manually delete the Load Balancer that EKS created (it does this outside of Terraform 
-via the Helm charts meaning Terraform cannot track it in the state file which is wildly unhelpful)
-- Then you can destroy with `cd infra && terraform destroy -var-file=../vars.auto.tfvars`
-
+- `cd services && terraform destroy -var-file=../vars.auto.tfvars`
+- `cd infra/aws && terraform destroy -var-file=../../vars.auto.tfvars`
+  
 On Terraform cloud you will probably need to run destroy on the services first and then the infra.
 
 When destroyed I recommend removing all plan and state files on your local machine to avoid confusion.
@@ -80,7 +83,9 @@ GCP is the preferred deployment platform for this repo, GKE Autopilot just works
 and it is very low drama with excellent debugging and connectivity tools on GCP.
 
 EKS sounds like it is all singing and all dancing, but it is quite possibly the worst implementation
-of Kubernetes I have ever seen, everything has a caveat or an additional piece of complexity.
+of Kubernetes I have ever seen, everything has a caveat or an additional piece of complexity, 
+everything was an afterthought by AWS - it is working and deploys fine as described above but the flexibility
+is really not there for when you want to develop it later.
 
 There are numerous problems associated with EKS that are documented in the code
 (for example, it is currently not possible to deploy Fargate profiles in EKS via Terraform), 
@@ -100,6 +105,7 @@ The primary goal of this repo is to provide a starting point for getting the Gua
 friendly manner, it will not fit every use-case but if your changes would benefit the community please consider contributing back to this repo!
 
 Items in particular we would love help with:
+- AWS Hardening (Applying ALB and WAF instead of Security groups)
 - Azure Integration (AKS)
 - Alibaba Integration (ACK)
 - Nomad Integration

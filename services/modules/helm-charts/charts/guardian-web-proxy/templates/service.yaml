@@ -4,6 +4,8 @@ metadata:
   name: {{ include "guardian-web-proxy.fullname" . }}-{{ .Release.Revision }}
   labels:
     {{- include "guardian-web-proxy.labels" . | nindent 4 }}
+  annotations:
+    {{- include "guardian-web-proxy.annotations" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:

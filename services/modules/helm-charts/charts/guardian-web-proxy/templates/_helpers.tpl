@@ -61,3 +61,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "guardian-web-proxy.annotations" -}}
+service.beta.kubernetes.io/aws-load-balancer-security-groups: {{ .Values.eks.securityGroups }}
+{{/*service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: {{ .Values.eks.securityGroups }}*/}}
+{{- end }}

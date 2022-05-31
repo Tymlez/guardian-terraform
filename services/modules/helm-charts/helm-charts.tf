@@ -15,6 +15,41 @@ resource "helm_release" "mongodb" {
   }
 }
 
+## 💩
+#resource "helm_release" "aws-load-balancer-controller" {
+#  name       = "aws-load-balancer-controller"
+#  chart      = "aws-load-balancer-controller"
+#  repository = "https://aws.github.io/eks-charts"
+#  timeout = "1000"
+#  count = 1
+#
+#  set {
+#    name  = "clusterName"
+#    value = var.cluster_name
+#  }
+#
+#  set {
+#    name  = "serviceAccount.create"
+#    value = false
+#  }
+#
+#  set {
+#    name  = "serviceAccount.name"
+#    value = "aws-load-balancer-controller"
+#  }
+#
+##  set {
+##    name  = "vpcId"
+##    value = var.vpc_id
+##  }
+##
+##  set {
+##    name = "region"
+##    value = var.region
+##  }
+#
+#}
+
 resource "helm_release" "guardian-message-broker" {
   name       = "guardian-message-broker"
   chart      = "nats"
@@ -157,12 +192,12 @@ resource "helm_release" "guardian-guardian-service" {
 
   set {
     name  = "global.guardian.maxTransactionFee"
-    value = coalesce(var.guardian_max_transaction_fee,0)
+    value = coalesce(var.guardian_max_transaction_fee, 0)
   }
 
   set {
     name  = "global.guardian.initialBalance"
-    value = coalesce(var.guardian_initial_balance,0)
+    value = coalesce(var.guardian_initial_balance, 0)
   }
 
   depends_on = [helm_release.guardian-message-broker]
@@ -174,7 +209,7 @@ resource "helm_release" "guardian-web-proxy" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-web-proxy"
   repository = "${var.docker_repository}/frontend"
 
-  timeout = "120"
+  timeout = "300"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-web-proxy/values.yaml")}"
@@ -188,6 +223,11 @@ resource "helm_release" "guardian-web-proxy" {
   set {
     name  = "image.tag"
     value = var.guardian_version
+  }
+
+  set {
+    name  = "eks.securityGroups"
+    value = aws_security_group.elb_security_group.id
   }
 
   depends_on = [helm_release.guardian-message-broker]

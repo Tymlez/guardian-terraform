@@ -1,63 +1,80 @@
 # It is recommended to bring these variables
-# into Terraform Cloud and use a remote backend so they can be secured properly
+# into Terraform Cloud so they can be secured
 
-# If you change this it will destroy everything on whatever the other cloud is
-deploy_to_where = "aws" #gcp | aws
+#this is important so we don't have to repeat the entire Kubernetes setup which is different for each cloud
+#it is not used for the infrastructure setup - only for setting up the services
+deploy_to_where = "aws"
 
-#Core Authentication
+################################################################################
+# AWS Required Variables
+################################################################################
+#Core Authentication - these should be placed into the Terraform Cloud as ENV vars
+#Alternatively you should use the AWS CLI and the [default] profile to run this locally.
+#Only adding them here wont work
 aws_access_key_id     = "AKIA..."
-aws_secret_access_key = ""
+aws_secret_access_key = "..."
 
 #Do you need to grant a particular user access to the EKS cluster (might be different from the credentials above?)
 #This is required if you are using AWS SSO to manage your users
-#Leave blank if not.
-aws_user_eks = "arn:aws:iam::123456789123:user/AWSReservedSSO_AdministratorAccess_b036e5d0c56f4c3b/my.name@tymlez.com"
-aws_role_eks = "arn:aws:iam::123456789123:role/AWSReservedSSO_AdministratorAccess_b036e5d0c56f4c3b"
+aws_user_eks = "arn:aws:iam::123456789:user/AWSReservedSSO_AdministratorAccess_b036e5/user.name@tymlez.com"
+aws_role_eks = "arn:aws:iam::123456789:role/AWSReservedSSO_AdministratorAccess_b036e5"
+
+#EKS Cluster Size
+eks_config = {
+  instance_types = ["t3a.xlarge"]
+  min_size       = 1
+  max_size       = 3
+  desired_size   = 2
+  capacity_type  = "SPOT"
+}
+################################################################################
+# GCP Required Variables
+################################################################################
 
 #remove newlines from Service Account JSON and escape
-#this service account should have access to everything you need to create via Terraform
-gcp_service_account = "{\"client_id\": \"...\"token_uri\": \"https://oauth2.googleapis.com/token\"}"
-gcp_project_id      = "my-project-240712"
+gcp_service_account = "{\"client_id\": \"1053104\"..... \"token_uri\": \"https://oauth2.googleapis.com/token\"}"
+gcp_project_id      = "gcp-project-id-124225"
 gcp_region          = "australia-southeast1"
 
-#docker hub credentials for pushing to the registry
-#this will be replaced once envision push images
-docker_hub_token      = ""
-docker_hub_username   = ""
-docker_hub_password   = ""
-docker_repository = ""
+#these can be ignored if using AWS or unless you change your CIDRs for the VPC in GCP
+gcp_local_whitelisted_ips = ["10.0.0.0/8", "192.168.0.0/16"]
 
-#Guardian Requirements
-guardian_operator_id         = ""
-guardian_operator_key        = ""
-guardian_ipfs_key            = ""
-guardian_topic_id            = ""
-guardian_access_token_secret = ""
-guardian_static_ip           = ""
-guardian_version             = "2.1.0" #or "latest"
-max_transaction_fee          = "10"
-initial_balance              = "30"
+
+################################################################################
+# Common Required Variables
+################################################################################
+
+
 
 #VPC Requirements
 vpc_name = "dev" #must not exist
 vpc_cidr = "10.0.0.0/16"
 
-
+firewall_default = "deny"
+whitelisted_ips  = ["8.8.8.8/32", "1.2.3.4/32"]
 
 #please note - our FQDN convention is:
 #cluster_name.stage.app_name.tld
-#e.g: guardian.dev.testing.tymlez.com
+#e.g: guardian.dev.tymlez.tymlez.com
 
-
-stage = "dev"
-
-app_name     = "testing" #or customer name
+app_name     = "tymlez" #or customer name
 cluster_name = "guardian-cluster"
 tld          = "tymlez.com"
+stage        = "dev"
 
-firewall_default = "ALLOW"
-whitelisted_ips = []
+docker_repository = "gcr.io/hedera-registry"
 
-#these can be ignored if using AWS or unless you change your CIDRs for the VPC in GCP
-gcp_local_whitelisted_ips = [ "10.0.0.0/8", "192.168.0.0/16" ]
+#Guardian Requirements
+guardian_operator_id         = "0.0.12345678"
+guardian_operator_key        = "<operator key>"
+guardian_ipfs_key            = "<nft / ipfs service key here>"
+guardian_topic_id            = "0.0.12345678"
+guardian_access_token_secret = "supersecretsauce"
+guardian_static_ip           = ""
+guardian_version             = "2.1.0" #or "latest"
+guardian_max_transaction_fee = "10"
+guardian_initial_balance     = "30"
+
+
+
 
