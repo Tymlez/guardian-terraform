@@ -1,6 +1,3 @@
-variable "deploy_to_where" {
-  description = "Where are we deploying this? Options: aws | gcp"
-}
 variable "stage" {
   description = "Environment stage"
 }

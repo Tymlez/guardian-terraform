@@ -1,10 +1,6 @@
 # It is recommended to bring these variables
 # into Terraform Cloud so they can be secured
 
-#this is important so we don't have to repeat the entire Kubernetes setup which is different for each cloud
-#it is not used for the infrastructure setup - only for setting up the services
-deploy_to_where = "aws"
-
 ################################################################################
 # AWS Required Variables
 ################################################################################

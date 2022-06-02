@@ -8,7 +8,6 @@ variable "region" {}
 variable "master_auth" {}
 variable "token" {}
 variable "docker_repository" {}
-variable "deploy_to_where" {}
 variable "firewall_default" {}
 variable "whitelisted_ips" {}
 variable "aws_elb_sec_grp" {}

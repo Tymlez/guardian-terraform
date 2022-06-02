@@ -10,7 +10,6 @@ module "helm-charts" {
   cluster_name                 = var.cluster_name
   cluster_id                   = local.cluster_id
   cluster_endpoint             = local.cluster_endpoint
-  deploy_to_where              = var.deploy_to_where
   master_auth                  = local.master_auth
   token                        = local.client_token
   docker_repository            = var.docker_repository

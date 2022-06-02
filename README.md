@@ -25,7 +25,7 @@ for customisation to be made according to requirements.
 
 Steps:
 - Rename `services/providers-gcp.tf_disabled` to `services/providers-gcp.tf`
-- Create a service account with Owner Privileges
+- Create a service account with Owner Privileges and save the json key file.
 - Enable Cloud Resource Manager API manually (This apparently cannot be done via Terraform) 
 by visiting https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview 
 or do `gcloud services enable cloudresourcemanager.googleapis.com`
@@ -52,7 +52,7 @@ Terraform coming soon.
 
 1. Clone the repo
 2. Copy `vars.auto.tfvars_sample` to `vars.auto.tfvars`
-3. Fill out the details required in `vars.auto.tfvars`
+3. Fill out the details required in `vars.auto.tfvars` (there are notes in the file for many variables)
 4. Deploy Infra first
    1. `cd infra`
    2. `cd aws` or `cd gcp`

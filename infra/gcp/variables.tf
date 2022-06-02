@@ -1,10 +1,6 @@
 variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
 
-
-variable "deploy_to_where" {
-  description = "Where are we deploying this? Options: aws | gcp"
-}
 variable "stage" {
   description = "Environment stage"
 }
