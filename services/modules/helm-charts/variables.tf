@@ -4,8 +4,6 @@ variable "cluster_id" {}
 variable "cluster_endpoint" {}
 variable "vpc_name" {}
 variable "vpc_cidr" {}
-variable "vpc_id" {}
-variable "waf_arn" {}
 variable "region" {}
 variable "master_auth" {}
 variable "token" {}
@@ -13,6 +11,7 @@ variable "docker_repository" {}
 variable "deploy_to_where" {}
 variable "firewall_default" {}
 variable "whitelisted_ips" {}
+variable "aws_elb_sec_grp" {}
 
 variable "guardian_access_token_secret" {}
 variable "guardian_topic_id" {}

@@ -22,7 +22,7 @@ module "eks" {
   create_node_security_group    = false
 
   cluster_security_group_id = aws_security_group.fully_open.id
-  node_security_group_id    = aws_security_group.cluster_sg.id
+  node_security_group_id    = aws_security_group.fully_open.id
 
   aws_auth_fargate_profile_pod_execution_role_arns = [aws_iam_role.eks-cluster.arn]
 

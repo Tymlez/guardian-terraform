@@ -16,6 +16,7 @@ resource "helm_release" "mongodb" {
 }
 
 ## 💩
+## This literally doesn't work with Helm, despite all the OIDC setup being done
 #resource "helm_release" "aws-load-balancer-controller" {
 #  name       = "aws-load-balancer-controller"
 #  chart      = "aws-load-balancer-controller"
@@ -54,6 +55,7 @@ resource "helm_release" "guardian-message-broker" {
   name       = "guardian-message-broker"
   chart      = "nats"
   repository = "https://nats-io.github.io/k8s/helm/charts/"
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-message-broker/values.yaml")}"
@@ -83,7 +85,7 @@ resource "helm_release" "guardian-logger-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-logger-service"
   repository = "${var.docker_repository}/logger-service"
 
-  timeout = "120"
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-logger-service/values.yaml")}"
@@ -107,7 +109,7 @@ resource "helm_release" "guardian-auth-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-auth-service"
   repository = "${var.docker_repository}/auth-service"
 
-  timeout = "120"
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-auth-service/values.yaml")}"
@@ -135,7 +137,7 @@ resource "helm_release" "guardian-api-gateway" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-api-gateway"
   repository = "${var.docker_repository}/api-gateway"
 
-  timeout = "120"
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-api-gateway/values.yaml")}"
@@ -159,7 +161,7 @@ resource "helm_release" "guardian-guardian-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-guardian-service"
   repository = "${var.docker_repository}/guardian-service"
 
-  timeout = "120"
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-guardian-service/values.yaml")}"
@@ -209,7 +211,7 @@ resource "helm_release" "guardian-web-proxy" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-web-proxy"
   repository = "${var.docker_repository}/frontend"
 
-  timeout = "300"
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-web-proxy/values.yaml")}"
@@ -227,7 +229,7 @@ resource "helm_release" "guardian-web-proxy" {
 
   set {
     name  = "eks.securityGroups"
-    value = aws_security_group.elb_security_group.id
+    value = var.aws_elb_sec_grp
   }
 
   depends_on = [helm_release.guardian-message-broker]
@@ -238,7 +240,7 @@ resource "helm_release" "guardian-ipfs-client" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
   repository = "${var.docker_repository}/ipfs-client"
 
-  timeout      = "300"
+  timeout      = "500"
   force_update = true
 
   values = [

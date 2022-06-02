@@ -4,4 +4,4 @@ metadata:
   name: {{ include "guardian-api-gateway.fullname" . }}-{{ .Release.Revision }}
 data:  
   MQ_ADDRESS: message-broker
-  SERVICE_CHANNEL: "api-gateway"
+  SERVICE_CHANNEL: api-gateway

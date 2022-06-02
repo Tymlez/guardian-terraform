@@ -1,5 +1,7 @@
+#in lieu of a firewall
 resource "aws_security_group" "elb_security_group" {
-  name_prefix = "${var.stage}-elb_security_group"
+  name        = "${var.stage}-elb_security_group"
+  description = "ELB Security Group"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -29,4 +31,9 @@ resource "aws_security_group" "elb_security_group" {
   tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "owned"
   }
+
+  depends_on = [module.eks]
 }
+
+
+

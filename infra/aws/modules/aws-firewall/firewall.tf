@@ -1,3 +1,5 @@
+#This is not currently used because of how much effort it is to get load balancer controller instealled
+#These rules should be correct though so hopefully it saves someone some time down the track
 resource "aws_wafv2_ip_set" "allowed_ip_set" {
   name = "${var.stage}-allowed-ip-set"
 

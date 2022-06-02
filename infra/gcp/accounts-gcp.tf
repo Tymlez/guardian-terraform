@@ -79,7 +79,7 @@ resource "google_project_service" "autoscaling-service" {
 }
 
 module "platform_vpc_gcp" {
-  source         = "../modules/gcp-vpc"
+  source         = "./modules/gcp-vpc"
   vpc_name       = var.vpc_name
   vpc_cidr       = var.vpc_cidr
   subnet_name    = "platform-subnet"
@@ -91,17 +91,17 @@ module "platform_vpc_gcp" {
 }
 
 module "gke_cluster" {
-  source       = "../modules/gke-cluster"
+  source       = "./modules/gke-cluster"
   cluster_name = var.cluster_name
   region       = var.gcp_region
-  network      = module.platform_vpc_gcp.0.vpc_name
-  subnetwork   = module.platform_vpc_gcp.0.subnet_name
+  network      = module.platform_vpc_gcp.vpc_name
+  subnetwork   = module.platform_vpc_gcp.subnet_name
 
   depends_on = [google_project_service.cloudresourcemanager-service]
 }
 
 module "gcp_firewall" {
-  source                    = "../modules/gcp-firewall"
+  source                    = "./modules/gcp-firewall"
   firewall_default          = var.firewall_default
   gcp_local_whitelisted_ips = var.gcp_local_whitelisted_ips
   vpc_name                  = var.vpc_name

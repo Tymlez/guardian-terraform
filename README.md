@@ -24,9 +24,11 @@ On GCP we deploy to GKE using an autopilot cluster, this is the simplest way to 
 for customisation to be made according to requirements.
 
 Steps:
-- Ensure that `deploy_to_where = "gcp"` is set in the `vars.auto.tfvars` file
-- Create a service account with Editor Privileges
-- Enable Cloud Resource Manager API manually (This apparently cannot be done via Terraform) by visiting https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview or do `gcloud services enable cloudresourcemanager.googleapis.com`
+- Rename `services/providers-gcp.tf_disabled` to `services/providers-gcp.tf`
+- Create a service account with Owner Privileges
+- Enable Cloud Resource Manager API manually (This apparently cannot be done via Terraform) 
+by visiting https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview 
+or do `gcloud services enable cloudresourcemanager.googleapis.com`
 
  
 ## Setup for deployment to AWS (EKS)
@@ -34,7 +36,7 @@ On AWS we deploy to EKS using a managed node group of 2 t3a.xlarge SPOT instance
 Fargate is not able to be used right now due to issues with EBS, Zones and Terraform.
 
 Steps:
-- Ensure that `deploy_to_where = "aws"` is set in the `vars.auto.tfvars` file
+- Rename `services/providers-aws.tf_disabled` to `services/providers-aws.tf`
 - Create an IAM User with Admin Privileges
 - Install AWS CLi and do `aws configure` - or -
 - Create `[default]` profile in `~/.aws/credentials` with the following:
@@ -82,7 +84,7 @@ When destroyed I recommend removing all plan and state files on your local machi
 GCP is the preferred deployment platform for this repo, GKE Autopilot just works,
 and it is very low drama with excellent debugging and connectivity tools on GCP.
 
-EKS sounds like it is all singing and all dancing, but it is quite possibly the worst implementation
+EKS is quite possibly the worst implementation
 of Kubernetes I have ever seen, everything has a caveat or an additional piece of complexity, 
 everything was an afterthought by AWS - it is working and deploys fine as described above but the flexibility
 is really not there for when you want to develop it later.
@@ -90,6 +92,12 @@ is really not there for when you want to develop it later.
 There are numerous problems associated with EKS that are documented in the code
 (for example, it is currently not possible to deploy Fargate profiles in EKS via Terraform), 
 where possible I have added supporting documentation as to when this will be feasible.
+
+If you are moving to Terraform Cloud (Suggested!), you will need to change `providers-aws.tf` to use
+`tfe_output` instead of remote state, this is due to the ridiculous requirements of EKS needing to have a security
+group added by Kubernetes when creating a load balancer if you want to protect it from outside usage.
+
+Alternatively if someone wants to submit a PR on implementing a working WAFv2 with EKS, I would be happy to add it.
 
 ## Testing
 
