@@ -8,7 +8,7 @@
 
 *Supports single command deployment of the Guardian to AWS / GCP*
 
-This repo is a complete Terraform setup for the deployment of the Guardian from hashgraph/guardian.
+This repo is a complete Terraform setup for the deployment of the Guardian from [https://github.com/hashgraph/guardian](https://github.com/hashgraph/guardian).
 Each deployment is by default limited to IP addresess in the configuration, this is because the guardian UI
 is currently unprotected and secrets can be exposed.
 
