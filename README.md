@@ -3,8 +3,8 @@
 ![terraform](https://img.shields.io/badge/Terraform-1.1.8-green)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Tymlez/guardian-terraform/graphs/commit-activity)
 ![Maintainer](https://img.shields.io/badge/maintainer-tymlez-blue)
-![LastCommit](https://badgen.net/github/last-commit/Tymlez/guardian-terraform)
-![Licence](https://badgen.net/github/license/Tymlez/guardian-terraform)
+![LastCommit](https://img.shields.io/github/last-commit/Tymlez/guardian-terraform)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Supports single command deployment of the Guardian to AWS / GCP*
 
