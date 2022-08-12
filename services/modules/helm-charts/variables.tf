@@ -27,3 +27,5 @@ variable "custom_helm_repository_password" {}
 variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
 variable "gcp_service_account" {}
+
+variable "system_schema" {}

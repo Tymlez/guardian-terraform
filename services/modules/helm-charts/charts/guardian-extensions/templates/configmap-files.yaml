@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "tymlez-extensions.fullname" . }}-files
+data:
+{{ (.Files.Glob "files/*").AsConfig | indent 2 }}
+  {{- if .global.SystemSchema }}
+  system_schema.json: |
+    {{ .global.SystemSchema | indent 2 }}
+  {{- end }}
+
+    After apply check for this existing in the config map

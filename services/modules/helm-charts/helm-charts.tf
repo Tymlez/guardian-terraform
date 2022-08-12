@@ -239,7 +239,7 @@ resource "helm_release" "guardian-web-proxy" {
 resource "helm_release" "guardian-ipfs-client" {
   name       = "guardian-ipfs-client"
   chart      = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
-  repository = "${var.docker_repository}/ipfs-client"
+#  repository = "${var.docker_repository}/ipfs-client"
 
   timeout = "500"
 
@@ -273,6 +273,21 @@ resource "helm_release" "vault" {
   depends_on = [helm_release.guardian-message-broker]
 }
 
+resource "helm_release" "guardian-extensions" {
+  name  = "guardian-extensions"
+  chart = "${path.root}/modules/helm-charts/charts/guardian-extensions"
+
+  timeout = "500"
+
+  values = [
+    "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}"
+  ]
+}
+
+locals {
+  whitelist = join(",", var.whitelisted_ips)
+}
+
 resource "helm_release" "extensions" {
   for_each = toset(var.custom_helm_charts)
   name     = each.value
@@ -282,6 +297,18 @@ resource "helm_release" "extensions" {
   repository_username = var.custom_helm_repository_username
   repository_password = var.custom_helm_repository_password
 
-  depends_on = [helm_release.guardian-message-broker]
+  values = [
+    "${file("${path.root}/custom_values.yaml")}"
+  ]
+#  set {
+#    name  = "global.guardian.whitelistedIps"
+#    value = "{${local.whitelist}}"
+#  }
+  set {
+    name  = "global.SystemSchema"
+    value = var.system_schema
+  }
 
+
+  depends_on = [helm_release.guardian-message-broker]
 }
