@@ -4,6 +4,13 @@ provider "google" {
   credentials = var.gcp_service_account
 }
 
+provider "google-beta" {
+  project     = var.gcp_project_id
+  region      = var.gcp_region
+  credentials = var.gcp_service_account
+}
+
+
 resource "google_project_service" "cloudresourcemanager-service" {
   project = var.gcp_project_id
   service = "cloudresourcemanager.googleapis.com"
@@ -78,6 +85,18 @@ resource "google_project_service" "autoscaling-service" {
 
 }
 
+resource "google_project_service" "gke-backup-service" {
+  project = var.gcp_project_id
+  service = "gkebackup.googleapis.com"
+
+  timeouts {
+    create = "30m"
+    update = "40m"
+  }
+
+  depends_on = [google_project_service.cloudresourcemanager-service]
+}
+
 module "platform_vpc_gcp" {
   source         = "./modules/gcp-vpc"
   vpc_name       = var.vpc_name
@@ -98,6 +117,8 @@ module "gke_cluster" {
   subnetwork   = module.platform_vpc_gcp.subnet_name
 
   depends_on = [google_project_service.cloudresourcemanager-service]
+  gcp_project_id = var.gcp_project_id
+  gcp_region = var.gcp_region
 }
 
 module "gcp_firewall" {

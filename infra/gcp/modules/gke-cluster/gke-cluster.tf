@@ -1,4 +1,5 @@
 resource "google_container_cluster" "cluster" {
+  provider = google-beta
   name     = var.cluster_name
   location = var.region
 
@@ -16,12 +17,34 @@ resource "google_container_cluster" "cluster" {
     enabled = true
   }
 
+  addons_config {
+     gke_backup_agent_config {
+      enabled = true
+    }
+  }
+
   maintenance_policy {
     daily_maintenance_window {
       start_time = "13:00"
     }
   }
-
 }
 
-
+#this is pretty buggy, for now ill leave disabled until there is create backup plan functionality in terraform
+#resource "null_resource" "schedule_backup" {
+#  provisioner "local-exec" {
+#    command = <<-EOT
+#gcloud alpha container backup-restore backup-plans create platform-cluster-backup \
+#  --project=${var.gcp_project_id} \
+#  --location=${var.gcp_region} \
+#  --cluster=projects/${var.gcp_project_id}/locations/${var.gcp_region}/clusters/${google_container_cluster.cluster.name} \
+#  --all-namespaces \
+#  --include-secrets \
+#  --include-volume-data
+#EOT
+#  }
+#
+#  depends_on = [
+#      google_container_cluster.cluster,
+#  ]
+#}

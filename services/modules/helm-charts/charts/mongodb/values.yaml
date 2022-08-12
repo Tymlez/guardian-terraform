@@ -3,3 +3,5 @@ persistence:
 useStatefulSet: true
 auth:
   enabled: false
+metadata:
+  name: mongo-db-pvc

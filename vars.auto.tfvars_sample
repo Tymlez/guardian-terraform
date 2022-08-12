@@ -72,5 +72,17 @@ guardian_max_transaction_fee = "10"
 guardian_initial_balance     = "30"
 
 
+#custom Helm repositories will be activated if the custom_helm_charts variable is populated
+custom_helm_repository = "https://charts.tymlez.com"
+custom_helm_charts = ["chart1", "chart2"]
+custom_helm_version = "latest"
+custom_helm_repository_username = "helm_username"
+custom_helm_repository_password = "helm_password"
+
+
+
+
+
+
 
 

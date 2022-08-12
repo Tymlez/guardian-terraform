@@ -79,3 +79,9 @@ variable "docker_repository" {}
 variable "tld" {}
 variable "whitelisted_ips" {}
 variable "firewall_default" {}
+
+variable "custom_helm_repository" {}
+variable "custom_helm_repository_username" {}
+variable "custom_helm_repository_password" {}
+variable "custom_helm_charts" {}
+variable "custom_helm_version" {}

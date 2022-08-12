@@ -20,3 +20,10 @@ variable "guardian_ipfs_key" {}
 variable "guardian_version" {}
 variable "guardian_max_transaction_fee" {}
 variable "guardian_initial_balance" {}
+
+variable "custom_helm_repository" {}
+variable "custom_helm_repository_username" {}
+variable "custom_helm_repository_password" {}
+variable "custom_helm_charts" {}
+variable "custom_helm_version" {}
+variable "gcp_service_account" {}

@@ -1,12 +1,13 @@
 resource "helm_release" "mongodb" {
   name       = "mongodb"
   chart      = "mongodb"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami"
   version    = "10.30.0"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/mongodb/values.yaml")}",
-    "${file("${path.root}/modules/helm-charts/charts/mongodb/aws-pvc.yaml")}", #required for EKS Bullshit, shouldn't affect other clouds
+    "${file("${path.root}/modules/helm-charts/charts/mongodb/aws-pvc.yaml")}",
+    "${file("${path.root}/modules/helm-charts/charts/mongodb/gcp-pvc.yaml")}"
   ]
 
   set {
@@ -55,7 +56,7 @@ resource "helm_release" "guardian-message-broker" {
   name       = "guardian-message-broker"
   chart      = "nats"
   repository = "https://nats-io.github.io/k8s/helm/charts/"
-  timeout = "500"
+  timeout    = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-message-broker/values.yaml")}"
@@ -240,8 +241,7 @@ resource "helm_release" "guardian-ipfs-client" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
   repository = "${var.docker_repository}/ipfs-client"
 
-  timeout      = "500"
-  force_update = true
+  timeout = "500"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-ipfs-client/values.yaml")}"
@@ -263,4 +263,25 @@ resource "helm_release" "guardian-ipfs-client" {
   }
 
   depends_on = [helm_release.guardian-message-broker]
+}
+
+resource "helm_release" "vault" {
+  name       = "vault"
+  chart      = "vault"
+  repository = "https://helm.releases.hashicorp.com"
+
+  depends_on = [helm_release.guardian-message-broker]
+}
+
+resource "helm_release" "extensions" {
+  for_each = toset(var.custom_helm_charts)
+  name     = each.value
+  chart    = each.value
+  repository = var.custom_helm_repository
+
+  repository_username = var.custom_helm_repository_username
+  repository_password = var.custom_helm_repository_password
+
+  depends_on = [helm_release.guardian-message-broker]
+
 }
