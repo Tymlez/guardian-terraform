@@ -16,7 +16,7 @@ module "vpc" {
   whitelisted_ips  = var.whitelisted_ips
 }
 
-#this is currently not in use (NACL's in the VPC are used instead)
+#this is currently not in use (security groups are used instead)
 #this is because AWS makes it next to impossible to get it working with a K8s generated ALB
 #that then needs to be attached to the generated ALB
 module "aws-firewall" {

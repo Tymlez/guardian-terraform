@@ -3,14 +3,13 @@
 ![terraform](https://img.shields.io/badge/Terraform-1.1.8-green)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Tymlez/guardian-terraform/graphs/commit-activity)
 ![Maintainer](https://img.shields.io/badge/maintainer-tymlez-blue)
-![LastCommit](https://badgen.net/github/last-commit/Tymlez/guardian-terraform)
-![Licence](https://badgen.net/github/license/Tymlez/guardian-terraform)
+![LastCommit](https://img.shields.io/github/last-commit/Tymlez/guardian-terraform)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Supports single command deployment of the Guardian to AWS / GCP*
 
-This repo is a complete Terraform setup for the deployment of the Guardian from hashgraph/guardian.
-Each deployment is by default limited to IP addresess in the configuration, this is because the guardian UI
-is currently unprotected and secrets can be exposed.
+This repo is a complete Terraform setup for the deployment of the Guardian from [https://github.com/hashgraph/guardian](https://github.com/hashgraph/guardian).
+Each deployment is by default limited to IP addresess in the configuration - this is to ensure that no one has access to the UI who shouldn't.
 
 **PLEASE UNDERSTAND THE REQUIREMENTS FOR SECURING THIS PROPERLY BEFORE DEPLOYING PUBLICLY.**
 
