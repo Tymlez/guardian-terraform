@@ -51,6 +51,14 @@ variable "guardian_topic_id" {
   type = string
 }
 
+variable "guardian_network" {
+  type = string
+}
+
+variable "guardian_logger_level" {
+  type = string
+}
+
 variable "guardian_access_token_secret" {
   type = string
 }
@@ -87,3 +95,10 @@ variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
 
 variable "system_schema" {}
+
+variable "enabled_newrelic" {
+
+}
+variable "newrelic_license_key" {
+
+}

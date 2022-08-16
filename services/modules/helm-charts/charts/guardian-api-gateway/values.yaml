@@ -47,8 +47,8 @@ ingress:
 
 resources: 
   limits:
-    cpu: 1000m
-    memory: 1Gi
+    cpu: 500m
+    memory: 256Mi
   requests:
     cpu: 500m
     memory: 256Mi
@@ -65,3 +65,19 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+livenessProbe:
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  timeoutSeconds: 5
+  httpGet:
+    path: /demo/registeredUsers
+    port: p3002
+readinessProbe:
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  timeoutSeconds: 5
+  exec:
+    command: 
+      -  node 
+      -  guardian-healthcheck.js

@@ -20,6 +20,8 @@ variable "guardian_ipfs_key" {}
 variable "guardian_version" {}
 variable "guardian_max_transaction_fee" {}
 variable "guardian_initial_balance" {}
+variable "guardian_network" {}
+variable "guardian_logger_level" {}
 
 variable "custom_helm_repository" {}
 variable "custom_helm_repository_username" {}
@@ -29,3 +31,14 @@ variable "custom_helm_version" {}
 variable "gcp_service_account" {}
 
 variable "system_schema" {}
+
+variable "enabled_newrelic" {
+    default = false
+}
+
+variable "newrelic_api_key" {
+    default = ""
+}
+variable "newrelic_license_key" {
+  
+}

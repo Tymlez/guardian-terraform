@@ -35,16 +35,43 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["entrypoint.sh"]
           livenessProbe:
-            exec:
-              command:
-              - echo
-              - $HOME
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: {{ include "guardian-logger-service.fullname" . }}-{{ .Release.Revision }}        
+                name: {{ include "guardian-logger-service.fullname" . }}-{{ .Release.Revision }}
+            - configMapRef:
+                name: guardian-extensions-newrelic
+          volumeMounts:
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/logger-service/guardian-healthcheck.js
+              subPath: guardian-healthcheck.js
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/logger-service/entrypoint.sh
+              subPath: entrypoint.sh
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath:  /usr/logger-service/node_modules/@guardian/common/dist/mq/message-broker-channel.js
+              subPath: message-broker-channel.js
+      volumes:
+        - name: guardian-extensions-files
+          configMap:
+            name: guardian-extensions-files
+            items:
+              - key: entrypoint.sh
+                path: entrypoint.sh
+              - key: message-broker-channel.js
+                path: message-broker-channel.js     
+              - key: guardian-healthcheck.js
+                path: guardian-healthcheck.js     
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

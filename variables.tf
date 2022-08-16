@@ -53,6 +53,9 @@ variable "guardian_ipfs_key" {
 variable "guardian_topic_id" {
   type = string
 }
+variable "guardian_network" {
+  type = string
+}
 
 variable "guardian_access_token_secret" {
   type = string

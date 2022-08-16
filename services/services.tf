@@ -18,6 +18,8 @@ module "helm-charts" {
   guardian_operator_id            = var.guardian_operator_id
   guardian_operator_key           = var.guardian_operator_key
   guardian_topic_id               = var.guardian_topic_id
+  guardian_network                = var.guardian_network
+  guardian_logger_level           = var.guardian_logger_level
   guardian_initial_balance        = var.guardian_initial_balance
   guardian_max_transaction_fee    = var.guardian_max_transaction_fee
   guardian_version                = var.guardian_version
@@ -28,4 +30,7 @@ module "helm-charts" {
   gcp_service_account             = var.gcp_service_account
   custom_helm_repository_username = var.custom_helm_repository_username
   custom_helm_repository_password = var.custom_helm_repository_password
+  system_schema                   = var.system_schema
+  enabled_newrelic                = var.enabled_newrelic
+  newrelic_license_key            = var.newrelic_license_key
 }

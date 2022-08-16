@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "guardian-web-proxy.fullname" . }}-{{ .Release.Revision }}
+  name: {{ include "guardian-web-proxy.fullname" . }}
   labels:
     {{- include "guardian-web-proxy.labels" . | nindent 4 }}
   annotations:

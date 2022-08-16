@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "tymlez-extensions.fullname" . }}-newrelic
+  name: {{ include "guardian-extensions.name" . }}-newrelic
 data:
-  NEW_RELIC_ENABLED: "true"
+  NEW_RELIC_ENABLED: "{{ .Values.global.enable_newrelic}}"
   NEW_RELIC_LOG_ENABLED: "true"
   NEW_RELIC_TRACER_ENABLED: "true"
-  NEW_RELIC_LICENSE_KEY: "{{ .Values.global.nrLicenseKey}}"
+  NEW_RELIC_LICENSE_KEY: "{{ .Values.global.newrelic_license_key}}"
   NEW_RELIC_NO_CONFIG_FILE: "true"
-  NEW_RELIC_LABELS: "env:{{ .Values.global.env}};client:{{ .Values.global.clientName }}"
+  NEW_RELIC_LABELS: "{{ .Values.global.apm_labels}}"
   NEW_RELIC_APPLICATION_LOGGING_FORWARDING_ENABLED: "true"
   NEW_RELIC_APPLICATION_LOGGING_LOCAL_DECORATING_ENABLED: "true"
   NEW_RELIC_APPLICATION_LOGGING_METRICS_ENABLED: "true"

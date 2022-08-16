@@ -1,3 +1,8 @@
+locals {
+  whitelist = join(",", var.whitelisted_ips)
+  enable_apm_name = var.enabled_newrelic ? "newrelic": ""
+}
+
 resource "helm_release" "mongodb" {
   name       = "mongodb"
   chart      = "mongodb"
@@ -72,6 +77,11 @@ resource "helm_release" "guardian-message-broker" {
     value = "1"
   }
 
+  set {
+    name  = "nats.limits.maxPayload"
+    value = "64mb"
+  }
+
 
   set {
     name  = "fullnameOverride"
@@ -86,19 +96,29 @@ resource "helm_release" "guardian-logger-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-logger-service"
   repository = "${var.docker_repository}/logger-service"
 
-  timeout = "500"
-
+  timeout = "180"
+  # force_update = true
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-logger-service/values.yaml")}"
   ]
 
   set {
-    name  = "image.repository"
-    value = "${var.docker_repository}/logger-service"
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
   }
   set {
     name  = "image.tag"
     value = var.guardian_version
+  }
+
+   set {
+    name  = "image.repository"
+    value = "${var.docker_repository}/logger-service"
+  }
+
+  set {
+    name = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-logger-service/**") : filesha1(f)]))
   }
 
   depends_on = [helm_release.mongodb, helm_release.guardian-message-broker]
@@ -130,7 +150,15 @@ resource "helm_release" "guardian-auth-service" {
     value = var.guardian_access_token_secret
   }
 
-  depends_on = [helm_release.guardian-message-broker]
+  set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
+  set {
+    name = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-auth-service/**") : filesha1(f)]))
+  }
+  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
 }
 
 resource "helm_release" "guardian-api-gateway" {
@@ -138,7 +166,7 @@ resource "helm_release" "guardian-api-gateway" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-api-gateway"
   repository = "${var.docker_repository}/api-gateway"
 
-  timeout = "500"
+  timeout = "180"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-api-gateway/values.yaml")}"
@@ -154,6 +182,16 @@ resource "helm_release" "guardian-api-gateway" {
     value = var.guardian_version
   }
 
+ set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
+
+  set {
+    name = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-api-gateway/**") : filesha1(f)]))
+  }
+
   depends_on = [helm_release.guardian-message-broker]
 }
 
@@ -162,7 +200,7 @@ resource "helm_release" "guardian-guardian-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-guardian-service"
   repository = "${var.docker_repository}/guardian-service"
 
-  timeout = "500"
+  timeout = "180"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-guardian-service/values.yaml")}"
@@ -189,18 +227,36 @@ resource "helm_release" "guardian-guardian-service" {
   }
 
   set {
-    name  = "global.guardian.topicId"
+    name  = "global.guardian.initializationTopicId"
     value = coalesce(var.guardian_topic_id, "0.0.0000000")
+  }
+
+    set {
+    name  = "global.guardian.network"
+    value = coalesce(var.guardian_network, "testnet")
+  }
+
+    set {
+    name  = "global.guardian.logLevel"
+    value = coalesce(var.guardian_logger_level, "2")
   }
 
   set {
     name  = "global.guardian.maxTransactionFee"
-    value = coalesce(var.guardian_max_transaction_fee, 0)
+    value = coalesce(var.guardian_max_transaction_fee, 20)
   }
 
   set {
     name  = "global.guardian.initialBalance"
-    value = coalesce(var.guardian_initial_balance, 0)
+    value = coalesce(var.guardian_initial_balance, 100)
+  }
+   set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
+   set {
+    name = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-guardian-service/**") : filesha1(f)]))
   }
 
   depends_on = [helm_release.guardian-message-broker]
@@ -212,7 +268,7 @@ resource "helm_release" "guardian-web-proxy" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-web-proxy"
   repository = "${var.docker_repository}/frontend"
 
-  timeout = "500"
+  timeout = "180"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-web-proxy/values.yaml")}"
@@ -241,7 +297,7 @@ resource "helm_release" "guardian-ipfs-client" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
 #  repository = "${var.docker_repository}/ipfs-client"
 
-  timeout = "500"
+  timeout = "180"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-ipfs-client/values.yaml")}"
@@ -261,8 +317,17 @@ resource "helm_release" "guardian-ipfs-client" {
     name  = "global.guardian.ipfsKey"
     value = var.guardian_ipfs_key
   }
+  set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
 
-  depends_on = [helm_release.guardian-message-broker]
+  set {
+    name = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-ipfs-client/**") : filesha1(f)]))
+  }
+
+  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
 }
 
 resource "helm_release" "vault" {
@@ -273,42 +338,77 @@ resource "helm_release" "vault" {
   depends_on = [helm_release.guardian-message-broker]
 }
 
+data "archive_file" "guardian-extensions" {
+  type        = "zip"
+  source_dir = "${path.root}/modules/helm-charts/charts/guardian-extensions"
+  output_path = "/tmp/guardian-extensions.zip"
+}
+
+resource "helm_release" "ingress-nginx" {
+    name = "ingress-nginx"
+    chart = "ingress-nginx"
+    version = "4.1.4"
+    repository =  "https://kubernetes.github.io/ingress-nginx"
+}
+
 resource "helm_release" "guardian-extensions" {
   name  = "guardian-extensions"
+  
   chart = "${path.root}/modules/helm-charts/charts/guardian-extensions"
 
-  timeout = "500"
-
+  timeout = "100"
+  force_update = true
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}"
   ]
-}
 
-locals {
-  whitelist = join(",", var.whitelisted_ips)
-}
-
-resource "helm_release" "extensions" {
-  for_each = toset(var.custom_helm_charts)
-  name     = each.value
-  chart    = each.value
-  repository = var.custom_helm_repository
-
-  repository_username = var.custom_helm_repository_username
-  repository_password = var.custom_helm_repository_password
-
-  values = [
-    "${file("${path.root}/custom_values.yaml")}"
-  ]
-#  set {
-#    name  = "global.guardian.whitelistedIps"
-#    value = "{${local.whitelist}}"
-#  }
   set {
-    name  = "global.SystemSchema"
-    value = var.system_schema
+    name  = "global.guardian.whitelistedIps"
+    value = "{${local.whitelist}}"
+  }
+  
+  set {
+    name  = "global.enable_newrelic"
+    value = "${var.enabled_newrelic}"
+  }
+  set {
+    name  = "global.newrelic_license_key"
+    value = "${var.newrelic_license_key}"
+  }
+  
+  set {
+    name  = "global.apm_labels"
+    value = "env:${var.stage}"
   }
 
-
-  depends_on = [helm_release.guardian-message-broker]
+  set {
+    name = "chart-sha1"
+    value = data.archive_file.guardian-extensions.output_sha
+  }
 }
+
+
+# resource "helm_release" "extensions" {
+#   for_each = toset(var.custom_helm_charts)
+#   name     = each.value
+#   chart    = each.value
+#   repository = var.custom_helm_repository
+
+#   repository_username = var.custom_helm_repository_username
+#   repository_password = var.custom_helm_repository_password
+
+#   values = [
+#     "${file("${path.root}/custom_values.yaml")}"
+#   ]
+# #  set {
+# #    name  = "global.guardian.whitelistedIps"
+# #    value = "{${local.whitelist}}"
+# #  }
+#   set {
+#     name  = "global.SystemSchema"
+#     value = var.system_schema
+#   }
+
+
+#   depends_on = [helm_release.guardian-message-broker]
+# }

@@ -23,13 +23,13 @@ spec:
               pathType: Prefix
               backend:
                 service:
-                  name: {{ .Release.Name }}-guardian-api-gateway-{{ .Release.Revision }}
+                  name: guardian-api-gateway
                   port:
                     number: 3002
             - path: /?(/|$)(.*)
               pathType: Prefix
               backend:
                 service:
-                  name: {{ .Release.Name }}-guardian-web-proxy
+                  name: guardian-web-proxy
                   port:
                     number: 80
