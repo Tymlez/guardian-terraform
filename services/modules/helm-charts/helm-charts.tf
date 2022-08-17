@@ -102,6 +102,23 @@ resource "helm_release" "guardian-logger-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-logger-service/values.yaml")}"
   ]
 
+ set {
+    name  = "resources.limits.cpu"
+    value = var.resource_configs.guardian_logger_service.cpu
+  }
+  set {
+    name  = "resources.limits.memory"
+    value = var.resource_configs.guardian_logger_service.memory
+  }
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_logger_service.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_logger_service.autoscale
+  }
+
   set {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
@@ -130,7 +147,7 @@ resource "helm_release" "guardian-auth-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-auth-service"
   repository = "${var.docker_repository}/auth-service"
 
-  timeout = "500"
+  timeout = "180"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-auth-service/values.yaml")}"
@@ -145,7 +162,7 @@ resource "helm_release" "guardian-auth-service" {
     value = var.guardian_version
   }
 
-  set {
+  set_sensitive  {
     name  = "global.guardian.accessTokenSecret"
     value = var.guardian_access_token_secret
   }
@@ -154,6 +171,25 @@ resource "helm_release" "guardian-auth-service" {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
   }
+
+  set {
+    name  = "resources.cpu"
+    value = var.resource_configs.guardian_auth_service.cpu
+  }
+  set {
+    name  = "resources.memory"
+    value = var.resource_configs.guardian_auth_service.memory
+  }
+   
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_auth_service.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_auth_service.autoscale
+  }
+ 
   set {
     name = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-auth-service/**") : filesha1(f)]))
@@ -187,11 +223,29 @@ resource "helm_release" "guardian-api-gateway" {
     value = local.enable_apm_name
   }
 
+ set {
+    name  = "resources.cpu"
+    value = var.resource_configs.guardian_api_gateway.cpu
+  }
+  set {
+    name  = "resources.memory"
+    value = var.resource_configs.guardian_api_gateway.memory
+  }
+  
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_api_gateway.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_api_gateway.autoscale
+  }
+
   set {
     name = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-api-gateway/**") : filesha1(f)]))
   }
-
+   
   depends_on = [helm_release.guardian-message-broker]
 }
 
@@ -253,6 +307,32 @@ resource "helm_release" "guardian-guardian-service" {
    set {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
+  }
+
+   set {
+    name  = "resources.limits.cpu"
+    value = var.resource_configs.guardian_guardian_service.cpu
+  }
+  set {
+    name  = "resources.limits.memory"
+    value = var.resource_configs.guardian_guardian_service.memory
+  }
+   set {
+    name  = "resources.requests.cpu"
+    value = var.resource_configs.guardian_guardian_service.cpu
+  }
+  set {
+    name  = "resources.requests.memory"
+    value = var.resource_configs.guardian_guardian_service.memory
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_guardian_service.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_guardian_service.autoscale
   }
    set {
     name = "chart-sha1"
@@ -320,6 +400,32 @@ resource "helm_release" "guardian-ipfs-client" {
   set {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
+  }
+  set {
+    name  = "resources.limits.cpu"
+    value = var.resource_configs.guardian_ipfs_client.cpu
+  }
+  set {
+    name  = "resources.limits.memory"
+    value = var.resource_configs.guardian_ipfs_client.memory
+  }
+
+  set {
+    name  = "resources.requests.cpu"
+    value = var.resource_configs.guardian_ipfs_client.cpu
+  }
+  set {
+    name  = "resources.requests.memory"
+    value = var.resource_configs.guardian_ipfs_client.memory
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_ipfs_client.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_ipfs_client.autoscale
   }
 
   set {
@@ -404,10 +510,7 @@ resource "helm_release" "guardian-extensions" {
 # #    name  = "global.guardian.whitelistedIps"
 # #    value = "{${local.whitelist}}"
 # #  }
-#   set {
-#     name  = "global.SystemSchema"
-#     value = var.system_schema
-#   }
+
 
 
 #   depends_on = [helm_release.guardian-message-broker]

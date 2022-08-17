@@ -30,7 +30,7 @@ module "helm-charts" {
   gcp_service_account             = var.gcp_service_account
   custom_helm_repository_username = var.custom_helm_repository_username
   custom_helm_repository_password = var.custom_helm_repository_password
-  system_schema                   = var.system_schema
   enabled_newrelic                = var.enabled_newrelic
   newrelic_license_key            = var.newrelic_license_key
+  resource_configs                = var.resource_configs
 }

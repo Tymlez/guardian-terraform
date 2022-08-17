@@ -30,8 +30,6 @@ variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
 variable "gcp_service_account" {}
 
-variable "system_schema" {}
-
 variable "enabled_newrelic" {
     default = false
 }
@@ -41,4 +39,47 @@ variable "newrelic_api_key" {
 }
 variable "newrelic_license_key" {
   
+}
+variable "resource_configs" {
+  type = map(
+    object(
+      {
+        cpu    = string,
+        memory = string,
+        replicas  = number,
+        autoscale = bool
+      }
+    )
+  )
+
+  default = {
+    guardian_logger_service = {
+      cpu    = "300m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_auth_service = {
+      cpu    = "300m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+
+     guardian_api_gateway = {
+      cpu    = "300m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+
+    guardian_ipfs_client = {
+      cpu    = "300m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+
+   
+  }
 }

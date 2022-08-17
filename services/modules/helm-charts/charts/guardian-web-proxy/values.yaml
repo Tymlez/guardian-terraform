@@ -37,12 +37,19 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 80
       protocol: TCP
 
+# service:
+#   type: ClusterIP
+#   ports:
+#     - port: 3004
+#       targetPort: p3004
+#       protocol: TCP
+#       name: p3004
 
 
 ingress:

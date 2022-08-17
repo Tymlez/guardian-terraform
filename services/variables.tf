@@ -93,8 +93,9 @@ variable "custom_helm_repository_username" {}
 variable "custom_helm_repository_password" {}
 variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
-
-variable "system_schema" {}
+variable "resource_configs" {
+  
+}
 
 variable "enabled_newrelic" {
 

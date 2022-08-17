@@ -42,16 +42,9 @@ service:
     - port: 3002
       targetPort: 'p3002'
  
-ingress:
-  enabled: false
-
 resources: 
-  limits:
-    cpu: 500m
-    memory: 256Mi
-  requests:
-    cpu: 500m
-    memory: 256Mi
+  cpu: 300m
+  memory: 256Mi
 
 autoscaling:
   enabled: false
