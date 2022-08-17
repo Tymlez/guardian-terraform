@@ -79,3 +79,7 @@ variable "eks_config" {
 
 variable "docker_repository" {}
 variable "tld" {}
+
+variable "aaa" {
+  
+}
