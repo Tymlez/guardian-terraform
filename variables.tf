@@ -6,7 +6,7 @@ variable "stage" {
 }
 
 variable "app_name" {
-  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.tymlez.com)"
+  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.abc.com)"
 }
 
 variable "aws_region" {
@@ -79,7 +79,6 @@ variable "eks_config" {
 
 variable "docker_repository" {}
 variable "tld" {}
-
-variable "aaa" {
-  
+variable "use_ingress" {
+  default = true
 }

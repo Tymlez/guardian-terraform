@@ -43,7 +43,7 @@ service:
       targetPort: 'p3002'
  
 resources: 
-  cpu: 300m
+  cpu: 500m
   memory: 256Mi
 
 autoscaling:

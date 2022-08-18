@@ -41,8 +41,13 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          resources: 
+            limits:
+              cpu: "{{ .Values.resources.cpu}}"
+              memory: "{{ .Values.resources.memory}}"
+            requests:
+              cpu: "{{ .Values.resources.cpu}}"
+              memory: "{{ .Values.resources.memory}}"
           envFrom:
             - configMapRef:
                 name: {{ include "guardian-logger-service.fullname" . }}-{{ .Release.Revision }}

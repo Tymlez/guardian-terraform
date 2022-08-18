@@ -1,6 +1,6 @@
 locals {
-  whitelist = join(",", var.whitelisted_ips)
-  enable_apm_name = var.enabled_newrelic ? "newrelic": ""
+  ingress_whitelisted_ips = join(",", var.ingress_whitelisted_ips)
+  enable_apm_name         = var.enabled_newrelic ? "newrelic" : ""
 }
 
 resource "helm_release" "mongodb" {
@@ -18,6 +18,10 @@ resource "helm_release" "mongodb" {
   set {
     name  = "auth.enabled"
     value = "false"
+  }
+  set {
+    name  = "persistence.size"
+    value = var.guardian_mongodb_persistent_size
   }
 }
 
@@ -69,12 +73,12 @@ resource "helm_release" "guardian-message-broker" {
 
   set {
     name  = "cluster.enabled"
-    value = "false"
+    value = var.resource_configs.nats.autoscale
   }
 
   set {
     name  = "cluster.replicas"
-    value = "1"
+    value = var.resource_configs.nats.replicas
   }
 
   set {
@@ -82,13 +86,26 @@ resource "helm_release" "guardian-message-broker" {
     value = "64mb"
   }
 
+  set {
+    name  = "nats.resources.requests.cpu"
+    value = var.resource_configs.nats.cpu
+  }
+
+  set {
+    name  = "nats.resources.requests.memory"
+    value = var.resource_configs.nats.memory
+  }
 
   set {
     name  = "fullnameOverride"
     value = "message-broker"
   }
 
-  depends_on = [helm_release.mongodb]
+  set {
+    name  = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-message-broker/**") : filesha1(f)]))
+  }
+  depends_on = []
 }
 
 resource "helm_release" "guardian-logger-service" {
@@ -102,12 +119,12 @@ resource "helm_release" "guardian-logger-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-logger-service/values.yaml")}"
   ]
 
- set {
-    name  = "resources.limits.cpu"
+  set {
+    name  = "resources.cpu"
     value = var.resource_configs.guardian_logger_service.cpu
   }
   set {
-    name  = "resources.limits.memory"
+    name  = "resources.memory"
     value = var.resource_configs.guardian_logger_service.memory
   }
   set {
@@ -128,13 +145,13 @@ resource "helm_release" "guardian-logger-service" {
     value = var.guardian_version
   }
 
-   set {
+  set {
     name  = "image.repository"
     value = "${var.docker_repository}/logger-service"
   }
 
   set {
-    name = "chart-sha1"
+    name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-logger-service/**") : filesha1(f)]))
   }
 
@@ -162,7 +179,7 @@ resource "helm_release" "guardian-auth-service" {
     value = var.guardian_version
   }
 
-  set_sensitive  {
+  set_sensitive {
     name  = "global.guardian.accessTokenSecret"
     value = var.guardian_access_token_secret
   }
@@ -180,7 +197,7 @@ resource "helm_release" "guardian-auth-service" {
     name  = "resources.memory"
     value = var.resource_configs.guardian_auth_service.memory
   }
-   
+
   set {
     name  = "replicaCount"
     value = var.resource_configs.guardian_auth_service.replicas
@@ -189,9 +206,9 @@ resource "helm_release" "guardian-auth-service" {
     name  = "autoscaling.enabled"
     value = var.resource_configs.guardian_auth_service.autoscale
   }
- 
+
   set {
-    name = "chart-sha1"
+    name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-auth-service/**") : filesha1(f)]))
   }
   depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
@@ -218,12 +235,12 @@ resource "helm_release" "guardian-api-gateway" {
     value = var.guardian_version
   }
 
- set {
+  set {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
   }
 
- set {
+  set {
     name  = "resources.cpu"
     value = var.resource_configs.guardian_api_gateway.cpu
   }
@@ -231,7 +248,7 @@ resource "helm_release" "guardian-api-gateway" {
     name  = "resources.memory"
     value = var.resource_configs.guardian_api_gateway.memory
   }
-  
+
   set {
     name  = "replicaCount"
     value = var.resource_configs.guardian_api_gateway.replicas
@@ -242,11 +259,11 @@ resource "helm_release" "guardian-api-gateway" {
   }
 
   set {
-    name = "chart-sha1"
+    name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-api-gateway/**") : filesha1(f)]))
   }
-   
-  depends_on = [helm_release.guardian-message-broker]
+
+  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
 }
 
 resource "helm_release" "guardian-guardian-service" {
@@ -285,12 +302,12 @@ resource "helm_release" "guardian-guardian-service" {
     value = coalesce(var.guardian_topic_id, "0.0.0000000")
   }
 
-    set {
+  set {
     name  = "global.guardian.network"
     value = coalesce(var.guardian_network, "testnet")
   }
 
-    set {
+  set {
     name  = "global.guardian.logLevel"
     value = coalesce(var.guardian_logger_level, "2")
   }
@@ -300,29 +317,27 @@ resource "helm_release" "guardian-guardian-service" {
     value = coalesce(var.guardian_max_transaction_fee, 20)
   }
 
+
   set {
     name  = "global.guardian.initialBalance"
     value = coalesce(var.guardian_initial_balance, 100)
   }
-   set {
+  set {
+    name  = "global.guardian.initialStandardRegistryBalance"
+    value = coalesce(var.guardian_initial_standard_registry_balance, 100)
+  }
+
+  set {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
   }
 
-   set {
-    name  = "resources.limits.cpu"
+  set {
+    name  = "resources.cpu"
     value = var.resource_configs.guardian_guardian_service.cpu
   }
   set {
-    name  = "resources.limits.memory"
-    value = var.resource_configs.guardian_guardian_service.memory
-  }
-   set {
-    name  = "resources.requests.cpu"
-    value = var.resource_configs.guardian_guardian_service.cpu
-  }
-  set {
-    name  = "resources.requests.memory"
+    name  = "resources.memory"
     value = var.resource_configs.guardian_guardian_service.memory
   }
 
@@ -334,24 +349,24 @@ resource "helm_release" "guardian-guardian-service" {
     name  = "autoscaling.enabled"
     value = var.resource_configs.guardian_guardian_service.autoscale
   }
-   set {
-    name = "chart-sha1"
+  set {
+    name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-guardian-service/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker]
+  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
 
 }
 
-resource "helm_release" "guardian-web-proxy" {
-  name       = "guardian-web-proxy"
-  chart      = "${path.root}/modules/helm-charts/charts/guardian-web-proxy"
+resource "helm_release" "guardian-frontend" {
+  name       = "guardian-frontend"
+  chart      = "${path.root}/modules/helm-charts/charts/guardian-frontend"
   repository = "${var.docker_repository}/frontend"
 
   timeout = "180"
 
   values = [
-    "${file("${path.root}/modules/helm-charts/charts/guardian-web-proxy/values.yaml")}"
+    "${file("${path.root}/modules/helm-charts/charts/guardian-frontend/values.yaml")}"
   ]
 
   set {
@@ -369,13 +384,42 @@ resource "helm_release" "guardian-web-proxy" {
     value = var.aws_elb_sec_grp
   }
 
+  set {
+    name  = "resources.cpu"
+    value = var.resource_configs.guardian_frontend.cpu
+  }
+  set {
+    name  = "resources.memory"
+    value = var.resource_configs.guardian_frontend.memory
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_frontend.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_frontend.autoscale
+  }
+
+  set {
+    name  = "service.type"
+    value = var.use_ingress ? "ClusterIP" : "LoadBalancer"
+  }
+
+  set {
+    name  = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-frontend/**") : filesha1(f)]))
+  }
+
+
   depends_on = [helm_release.guardian-message-broker]
 }
 
 resource "helm_release" "guardian-ipfs-client" {
-  name       = "guardian-ipfs-client"
-  chart      = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
-#  repository = "${var.docker_repository}/ipfs-client"
+  name  = "guardian-ipfs-client"
+  chart = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
+  #  repository = "${var.docker_repository}/ipfs-client"
 
   timeout = "180"
 
@@ -393,7 +437,7 @@ resource "helm_release" "guardian-ipfs-client" {
     value = var.guardian_version
   }
 
-  set {
+  set_sensitive {
     name  = "global.guardian.ipfsKey"
     value = var.guardian_ipfs_key
   }
@@ -402,20 +446,11 @@ resource "helm_release" "guardian-ipfs-client" {
     value = local.enable_apm_name
   }
   set {
-    name  = "resources.limits.cpu"
+    name  = "resources.cpu"
     value = var.resource_configs.guardian_ipfs_client.cpu
   }
   set {
-    name  = "resources.limits.memory"
-    value = var.resource_configs.guardian_ipfs_client.memory
-  }
-
-  set {
-    name  = "resources.requests.cpu"
-    value = var.resource_configs.guardian_ipfs_client.cpu
-  }
-  set {
-    name  = "resources.requests.memory"
+    name  = "resources.memory"
     value = var.resource_configs.guardian_ipfs_client.memory
   }
 
@@ -429,7 +464,7 @@ resource "helm_release" "guardian-ipfs-client" {
   }
 
   set {
-    name = "chart-sha1"
+    name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-ipfs-client/**") : filesha1(f)]))
   }
 
@@ -446,23 +481,24 @@ resource "helm_release" "vault" {
 
 data "archive_file" "guardian-extensions" {
   type        = "zip"
-  source_dir = "${path.root}/modules/helm-charts/charts/guardian-extensions"
+  source_dir  = "${path.root}/modules/helm-charts/charts/guardian-extensions"
   output_path = "/tmp/guardian-extensions.zip"
 }
 
 resource "helm_release" "ingress-nginx" {
-    name = "ingress-nginx"
-    chart = "ingress-nginx"
-    version = "4.1.4"
-    repository =  "https://kubernetes.github.io/ingress-nginx"
+  count      = var.use_ingress ? 1 : 0
+  name       = "ingress-nginx"
+  chart      = "ingress-nginx"
+  version    = "4.1.4"
+  repository = "https://kubernetes.github.io/ingress-nginx"
 }
 
 resource "helm_release" "guardian-extensions" {
-  name  = "guardian-extensions"
-  
+  name = "guardian-extensions"
+
   chart = "${path.root}/modules/helm-charts/charts/guardian-extensions"
 
-  timeout = "100"
+  timeout      = "100"
   force_update = true
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}"
@@ -470,25 +506,25 @@ resource "helm_release" "guardian-extensions" {
 
   set {
     name  = "global.guardian.whitelistedIps"
-    value = "{${local.whitelist}}"
+    value = "{${local.ingress_whitelisted_ips}}"
   }
-  
+
   set {
     name  = "global.enable_newrelic"
-    value = "${var.enabled_newrelic}"
+    value = var.enabled_newrelic
   }
   set {
     name  = "global.newrelic_license_key"
-    value = "${var.newrelic_license_key}"
+    value = var.newrelic_license_key
   }
-  
+
   set {
     name  = "global.apm_labels"
     value = "env:${var.stage}"
   }
 
   set {
-    name = "chart-sha1"
+    name  = "chart-sha1"
     value = data.archive_file.guardian-extensions.output_sha
   }
 }

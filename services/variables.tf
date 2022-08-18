@@ -3,7 +3,7 @@ variable "stage" {
 }
 
 variable "app_name" {
-  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.tymlez.com)"
+  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.your-comain.com)"
 }
 
 variable "aws_region" {
@@ -74,7 +74,13 @@ variable "guardian_version" {
 variable "guardian_max_transaction_fee" {
   type = number
 }
+variable "guardian_initial_standard_registry_balance" {
+  type = number
 
+}
+variable "guardian_mongodb_persistent_size" {
+  default = "50Gi"
+}
 variable "guardian_initial_balance" {
   type = number
 }
@@ -84,22 +90,21 @@ variable "cluster_name" {
 }
 
 variable "docker_repository" {}
+variable "use_ingress" {
+  default = true
+}
 variable "tld" {}
-variable "whitelisted_ips" {}
+variable "ingress_whitelisted_ips" {
+  default = "{0.0.0.0/0}"
+}
 variable "firewall_default" {}
+variable "resource_configs" {}
 
 variable "custom_helm_repository" {}
 variable "custom_helm_repository_username" {}
 variable "custom_helm_repository_password" {}
 variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
-variable "resource_configs" {
-  
-}
-
-variable "enabled_newrelic" {
-
-}
-variable "newrelic_license_key" {
-
-}
+# APM
+variable "enabled_newrelic" {}
+variable "newrelic_license_key" {}

@@ -40,10 +40,13 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          resources: 
+            limits:
+              cpu: "{{ .Values.resources.cpu}}"
+              memory: "{{ .Values.resources.memory}}"
+            requests:
+              cpu: "{{ .Values.resources.cpu}}"
+              memory: "{{ .Values.resources.memory}}"
           envFrom:
             - configMapRef:
                 name: {{ include "guardian-ipfs-client.fullname" . }}-{{ .Release.Revision }}
@@ -51,8 +54,6 @@ spec:
                 name: {{ include "guardian-ipfs-client.fullname" . }}-{{ .Release.Revision }}
             - configMapRef:
                 name: guardian-extensions-newrelic 
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: guardian-extensions-files
               readOnly: true

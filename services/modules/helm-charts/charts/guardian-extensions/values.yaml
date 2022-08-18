@@ -1,4 +1,9 @@
-# Default values for guardian-web-proxy.
+# Default values for guardian-frontend.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+ingress:
+  enabled: true
+proxy:
+  guardian_api_gateway_host: guardian-api-gateway
+  guardian_frontend_host: guardian-frontend

@@ -10,17 +10,17 @@ locals {
 }
 
 data "aws_eks_cluster" "this" {
-  name = var.cluster_name
+  name       = var.cluster_name
   depends_on = [module.eks]
 }
 
 data "tls_certificate" "cluster" {
-  url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+  url        = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
   depends_on = [module.eks]
 }
 
 data "aws_iam_openid_connect_provider" "oidc" {
-  url             = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+  url        = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
   depends_on = [module.eks]
 }
 
@@ -52,7 +52,7 @@ resource "aws_iam_role" "cluster" {
 ################################################################################
 
 module "irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name = local.name
 
@@ -76,7 +76,7 @@ module "irsa_role" {
 }
 
 module "cluster_autoscaler_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                        = "cluster-autoscaler"
   attach_cluster_autoscaler_policy = true
@@ -93,7 +93,7 @@ module "cluster_autoscaler_irsa_role" {
 }
 
 module "ebs_csi_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name             = "ebs-csi"
   attach_ebs_csi_policy = true
@@ -109,7 +109,7 @@ module "ebs_csi_irsa_role" {
 }
 
 module "efs_csi_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name             = "efs-csi"
   attach_efs_csi_policy = true
@@ -125,7 +125,7 @@ module "efs_csi_irsa_role" {
 }
 
 module "fsx_lustre_csi_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                    = "fsx-lustre-csi"
   attach_fsx_lustre_csi_policy = true
@@ -139,7 +139,7 @@ module "fsx_lustre_csi_irsa_role" {
 }
 
 module "load_balancer_controller_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                              = "load-balancer-controller"
   attach_load_balancer_controller_policy = true
@@ -155,7 +155,7 @@ module "load_balancer_controller_irsa_role" {
 }
 
 module "load_balancer_controller_targetgroup_binding_only_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                                                       = "load-balancer-controller-targetgroup-binding-only"
   attach_load_balancer_controller_targetgroup_binding_only_policy = true
@@ -171,7 +171,7 @@ module "load_balancer_controller_targetgroup_binding_only_irsa_role" {
 }
 
 module "node_termination_handler_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                              = "node-termination-handler"
   attach_node_termination_handler_policy = true
@@ -187,7 +187,7 @@ module "node_termination_handler_irsa_role" {
 }
 
 module "vpc_cni_ipv4_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name             = "vpc-cni-ipv4"
   attach_vpc_cni_policy = true
@@ -204,7 +204,7 @@ module "vpc_cni_ipv4_irsa_role" {
 }
 
 module "vpc_cni_ipv6_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name             = "vpc-cni-ipv6"
   attach_vpc_cni_policy = true

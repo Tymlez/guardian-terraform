@@ -36,12 +36,8 @@ securityContext: {}
 
 
 resources: 
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-  requests:
-    cpu: 500m
-    memory: 256Mi
+  cpu: 300mi
+  memory: 256Mi
 
 autoscaling:
   enabled: false

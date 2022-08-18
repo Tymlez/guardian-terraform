@@ -125,7 +125,7 @@ module "eks" {
 }
 
 module "vpc_cni_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name             = "vpc_cni"
   attach_vpc_cni_policy = true
