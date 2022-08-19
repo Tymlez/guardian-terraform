@@ -1,5 +1,5 @@
 locals {
-  ingress_whitelisted_ips = join(",", var.ingress_whitelisted_ips)
+  ingress_whitelisted_ips = tostring(format("%s", join(",", var.ingress_whitelisted_ips)))
   enable_apm_name         = var.enabled_newrelic ? "newrelic" : ""
 }
 
@@ -292,7 +292,7 @@ resource "helm_release" "guardian-guardian-service" {
     value = coalesce(var.guardian_operator_id, "operatoridfailed")
   }
 
-  set {
+  set_sensitive {
     name  = "global.guardian.operatorKey"
     value = coalesce(var.guardian_operator_key, "operatorkeyfailed")
   }
@@ -413,7 +413,7 @@ resource "helm_release" "guardian-frontend" {
   }
 
 
-  depends_on = [helm_release.guardian-message-broker]
+  depends_on = [helm_release.guardian-api-gateway]
 }
 
 resource "helm_release" "guardian-ipfs-client" {
@@ -479,18 +479,25 @@ resource "helm_release" "vault" {
   depends_on = [helm_release.guardian-message-broker]
 }
 
-data "archive_file" "guardian-extensions" {
-  type        = "zip"
-  source_dir  = "${path.root}/modules/helm-charts/charts/guardian-extensions"
-  output_path = "/tmp/guardian-extensions.zip"
-}
 
 resource "helm_release" "ingress-nginx" {
   count      = var.use_ingress ? 1 : 0
   name       = "ingress-nginx"
   chart      = "ingress-nginx"
-  version    = "4.1.4"
+  version    = "4.2.1"
   repository = "https://kubernetes.github.io/ingress-nginx"
+  set {
+    name  = "controller.config.use-forwarded-headers"
+    value = "true"
+  }
+  set {
+    name  = "controller.service.externalTrafficPolicy"
+    value = "Local"
+  }
+  # set {
+  #   name  = "controller.config.use-proxy-protocol"
+  #   value = "true"
+  # }
 }
 
 resource "helm_release" "guardian-extensions" {
@@ -501,13 +508,13 @@ resource "helm_release" "guardian-extensions" {
   timeout      = "100"
   force_update = true
   values = [
-    "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}"
+    "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}",
+    yamlencode({
+      ingress = {
+        whitelistedIps = local.ingress_whitelisted_ips
+      }
+    })
   ]
-
-  set {
-    name  = "global.guardian.whitelistedIps"
-    value = "{${local.ingress_whitelisted_ips}}"
-  }
 
   set {
     name  = "global.enable_newrelic"
@@ -525,8 +532,9 @@ resource "helm_release" "guardian-extensions" {
 
   set {
     name  = "chart-sha1"
-    value = data.archive_file.guardian-extensions.output_sha
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-extensions/**") : filesha1(f)]))
   }
+
 }
 
 

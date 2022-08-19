@@ -4,6 +4,7 @@
 
 ingress:
   enabled: true
+  whitelistedIps: "180.150.54.180/32,49.255.23.135/32,194.223.39.226/32,120.21.49.106/32"
 proxy:
-  guardian_api_gateway_host: guardian-api-gateway
-  guardian_frontend_host: guardian-frontend
+  guardian_api_gateway: guardian-api-gateway
+  guardian_frontend: guardian-frontend

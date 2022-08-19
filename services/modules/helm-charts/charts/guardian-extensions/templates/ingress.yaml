@@ -10,9 +10,10 @@ metadata:
         nginx.ingress.kubernetes.io/proxy-connect-timeout: "180"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "180"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "180"
-        nginx.ingress.kubernetes.io/proxy-body-size: 64mb
-        # nginx.ingress.kubernetes.io/auth-type: basic
-        nginx.ingress.kubernetes.io/whitelist-source-range: "{{.Values.global.guardian.whitelistedIps}}"
+        nginx.ingress.kubernetes.io/proxy-body-size: 64m
+        nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
+        nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.whitelistedIps }}
+        # nginx.ingress.kubernetes.io/ssl-passthrough: "false"
 spec:
     ingressClassName: 'nginx'
     rules:
@@ -22,14 +23,14 @@ spec:
               pathType: Prefix
               backend:
                 service:
-                  name: {{ .Values.proxy.guardian_api_gateway_host }}
+                  name: {{ .Values.proxy.guardian_api_gateway }}
                   port:
                     number: 3002
             - path: /?(/|$)(.*)
               pathType: Prefix
               backend:
                 service:
-                  name: {{ .Values.proxy.guardian_frontend_host}}
+                  name: {{ .Values.proxy.guardian_frontend}}
                   port:
                     number: 80
 {{- end}}

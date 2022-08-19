@@ -48,7 +48,7 @@ vpc_cidr = "10.0.0.0/16"
 
 firewall_default = "deny"
 whitelisted_ips  = ["8.8.8.8/32", "1.2.3.4/32"]
-ingress_whitelisted_ips = ["180.150.54.180/32", "49.255.23.135/32"]
+ingress_whitelisted_ips = ["0.0.0.0/0", "123.123.123.123/32"]
 #please note - our FQDN convention is:
 #cluster_name.stage.app_name.tld
 #e.g: guardian.dev.tymlez.tymlez.com
@@ -76,7 +76,7 @@ guardian_logger_level        = 2
 guardian_mongodb_persistent_size = 50Gi
 
 #custom Helm repositories will be activated if the custom_helm_charts variable is populated
-#custom_helm_repository = "https://charts.tymlez.com"
+#custom_helm_repository = "https://charts.your-domain.com"
 #custom_helm_charts = ["chart1", "chart2"]
 #custom_helm_version = "latest"
 #custom_helm_repository_username = "helm_username"
@@ -120,8 +120,8 @@ resource_configs = {
       autoscale = false
     }
     guardian_frontend = {
-      cpu    = "100m",
-      memory = "128Mi",
+      cpu       = "100m",
+      memory    = "128Mi",
       replicas  = 1,
       autoscale = false
     }

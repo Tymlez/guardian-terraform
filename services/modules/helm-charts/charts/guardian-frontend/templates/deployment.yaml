@@ -46,11 +46,11 @@ spec:
               port: http
           resources: 
             limits:
-              cpu: "{{ .Values.resources.cpu}}"
-              memory: "{{ .Values.resources.memory}}"
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
             requests:
-              cpu: "{{ .Values.resources.cpu}}"
-              memory: "{{ .Values.resources.memory}}"
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
           volumeMounts:
             - mountPath: /etc/nginx/conf.d
               readOnly: true
