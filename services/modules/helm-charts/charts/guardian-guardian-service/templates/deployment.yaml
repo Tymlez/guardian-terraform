@@ -32,11 +32,54 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          command: ["/bin/sh"]
+          args: ["entrypoint.sh"]
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources: 
+            limits:
+              cpu: "{{ .Values.resources.cpu}}"
+              memory: "{{ .Values.resources.memory}}"
+            requests:
+              cpu: "{{ .Values.resources.cpu}}"
+              memory: "{{ .Values.resources.memory}}"
           envFrom:
             - configMapRef:
                 name: {{ include "guardian-guardian-service.fullname" . }}-{{ .Release.Revision }}
+            - secretRef:
+                name: {{ include "guardian-guardian-service.fullname" . }}-{{ .Release.Revision }}
+            - configMapRef:
+                name: guardian-extensions-newrelic
+          volumeMounts:
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/guardian-service/guardian-healthcheck.js
+              subPath: guardian-healthcheck.js
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/guardian-service/entrypoint.sh
+              subPath: entrypoint.sh
+            
+            {{ if eq .Values.global.guardian.enable_apm_name "newrelic" }}
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/guardian-service/node_modules/@guardian/common/dist/mq/message-broker-channel.js
+              subPath: message-broker-channel.js
+            {{- end }}
+
+      volumes:
+        - name: guardian-extensions-files
+          configMap:
+            name: guardian-extensions-files
+            items:
+              - key: entrypoint.sh
+                path: entrypoint.sh
+              - key: message-broker-channel.js
+                path: message-broker-channel.js     
+              - key: guardian-healthcheck.js
+                path: guardian-healthcheck.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

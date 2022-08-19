@@ -7,5 +7,5 @@ data:
   DB_HOST: mongodb
   DB_DATABASE: auth_db
   SERVICE_CHANNEL: auth-service
-  ACCESS_TOKEN_SECRET: {{ .Values.global.guardian.accessTokenSecret }}
- 
+  ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
+  NEW_RELIC_APP_NAME: "{{ include "guardian-auth-service.fullname" . }}"

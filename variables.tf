@@ -6,7 +6,7 @@ variable "stage" {
 }
 
 variable "app_name" {
-  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.tymlez.com)"
+  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.abc.com)"
 }
 
 variable "aws_region" {
@@ -53,6 +53,9 @@ variable "guardian_ipfs_key" {
 variable "guardian_topic_id" {
   type = string
 }
+variable "guardian_network" {
+  type = string
+}
 
 variable "guardian_access_token_secret" {
   type = string
@@ -76,3 +79,6 @@ variable "eks_config" {
 
 variable "docker_repository" {}
 variable "tld" {}
+variable "use_ingress" {
+  default = true
+}

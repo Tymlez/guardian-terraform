@@ -1,7 +1,13 @@
 #!/bin/sh
 set -ex
-echo "this is trigger by custom sh file"
-pwd
-npm install --save-dev --legacy-peer-deps newrelic @newrelic/native-metrics
-# npm install newrelic @newrelic/native-metrics
-node -r newrelic ./dist/index.js
+case "$ENABLE_APM_NAME" in
+    "newrelic")
+        echo "Installing newrelic dependencies"
+
+        npm install --save-dev --legacy-peer-deps newrelic @newrelic/native-metrics
+        node -r newrelic ./dist/index.js
+    ;;
+    *)
+      node ./dist/index.js
+    ;;
+esac

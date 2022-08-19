@@ -1,6 +1,13 @@
 # Default values for guardian-logger-service.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+service:
+  type: ClusterIP
+  ports:
+    - port: 3001
+      targetPort: p3001
+      protocol: TCP
+      name: p3001
 
 replicaCount: 1
 
@@ -29,12 +36,8 @@ securityContext: {}
 
 
 resources: 
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-  requests:
-    cpu: 500m
-    memory: 256Mi
+  cpu: 300mi
+  memory: 256Mi
 
 autoscaling:
   enabled: false
@@ -49,3 +52,21 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+livenessProbe:
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  timeoutSeconds: 5
+  exec:
+    command: 
+      - /bin/bash
+      - -c
+      - ps aux | grep index.js
+readinessProbe:
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  timeoutSeconds: 5
+  exec:
+    command: 
+      -  node 
+      -  guardian-healthcheck.js

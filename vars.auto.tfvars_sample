@@ -48,7 +48,7 @@ vpc_cidr = "10.0.0.0/16"
 
 firewall_default = "deny"
 whitelisted_ips  = ["8.8.8.8/32", "1.2.3.4/32"]
-
+ingress_whitelisted_ips = ["0.0.0.0/0", "123.123.123.123/32"]
 #please note - our FQDN convention is:
 #cluster_name.stage.app_name.tld
 #e.g: guardian.dev.tymlez.tymlez.com
@@ -57,7 +57,7 @@ app_name     = "tymlez" #or customer name
 cluster_name = "guardian-cluster"
 tld          = "tymlez.com"
 stage        = "dev"
-
+use_ingress = true
 docker_repository = "gcr.io/hedera-registry"
 
 #Guardian Requirements
@@ -67,21 +67,71 @@ guardian_ipfs_key            = "<nft / ipfs service key here>"
 guardian_topic_id            = "0.0.12345678"
 guardian_access_token_secret = "supersecretsauce"
 guardian_static_ip           = ""
-guardian_version             = "2.1.0" #or "latest"
+guardian_version             = "2.3.1" #or "latest"
+guardian_network             = "testnet"
 guardian_max_transaction_fee = "10"
 guardian_initial_balance     = "30"
-
+guardian_initial_standard_registry_balance = "100"
+guardian_logger_level        = 2
+guardian_mongodb_persistent_size = 50Gi
 
 #custom Helm repositories will be activated if the custom_helm_charts variable is populated
-custom_helm_repository = "https://charts.tymlez.com"
-custom_helm_charts = ["chart1", "chart2"]
-custom_helm_version = "latest"
-custom_helm_repository_username = "helm_username"
-custom_helm_repository_password = "helm_password"
+#custom_helm_repository = "https://charts.your-domain.com"
+#custom_helm_charts = ["chart1", "chart2"]
+#custom_helm_version = "latest"
+#custom_helm_repository_username = "helm_username"
+#custom_helm_repository_password = "helm_password"
 
 
+# to enable newrelic APM
+enabled_newrelic=false
+newrelic_license_key = "your newrelic license key if enable_newrelic=true"
 
-
+# Custom container size
+resource_configs = { 
+  guardian_logger_service = {
+      cpu    = "250m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+  guardian_auth_service = {
+      cpu    = "250m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_ipfs_client = {
+      cpu    = "250m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_api_gateway = {
+      cpu    = "500m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_guardian_service ={
+      cpu    = "500m",
+      memory = "256Mi",
+      replicas  = 2,
+      autoscale = false
+    }
+    guardian_frontend = {
+      cpu       = "100m",
+      memory    = "128Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    nats ={
+      cpu    = "500m",
+      memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+}
 
 
 

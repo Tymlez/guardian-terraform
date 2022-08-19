@@ -18,7 +18,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   addons_config {
-     gke_backup_agent_config {
+    gke_backup_agent_config {
       enabled = true
     }
   }

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "guardian-frontend.fullname" . }}
+  labels:
+    {{- include "guardian-frontend.labels" . | nindent 4 }}
+  annotations:
+    {{- include "guardian-frontend.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- toYaml .Values.service.ports | nindent 4 }}
+  selector:
+    {{- include "guardian-frontend.selectorLabels" . | nindent 4 }}
+
