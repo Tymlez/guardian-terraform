@@ -4,7 +4,13 @@
 
 ingress:
   enabled: true
-  whitelistedIps: "180.150.54.180/32,49.255.23.135/32,194.223.39.226/32,120.21.49.106/32"
+  whitelistedIps: ""
+  custom_helm_ingresses:
+    enable: false
+    service_name: ""
+    service_port: ""
+    service_path: ""
+
 proxy:
   guardian_api_gateway: guardian-api-gateway
   guardian_frontend: guardian-frontend

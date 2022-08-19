@@ -518,9 +518,31 @@ resource "helm_release" "guardian-extensions" {
   }
 
   set {
+    name  = "ingress.custom_helm_ingresses.enable"
+    value = var.custom_helm_ingresses.enable
+  }
+
+
+  set {
+    name  = "ingress.custom_helm_ingresses.service_name"
+    value = var.custom_helm_ingresses.service_name
+  }
+
+
+  set {
+    name  = "ingress.custom_helm_ingresses.service_path"
+    value = var.custom_helm_ingresses.service_path
+  }
+
+  set {
+    name  = "ingress.custom_helm_ingresses.service_port"
+    value = var.custom_helm_ingresses.service_port
+  }
+  set {
     name  = "global.enable_newrelic"
     value = var.enabled_newrelic
   }
+
   set {
     name  = "global.newrelic_license_key"
     value = var.newrelic_license_key
@@ -539,24 +561,18 @@ resource "helm_release" "guardian-extensions" {
 }
 
 
-# resource "helm_release" "extensions" {
-#   for_each = toset(var.custom_helm_charts)
-#   name     = each.value
-#   chart    = each.value
-#   repository = var.custom_helm_repository
+resource "helm_release" "extensions" {
+  for_each   = toset(var.custom_helm_charts)
+  name       = each.value
+  chart      = each.value
+  repository = var.custom_helm_repository
 
-#   repository_username = var.custom_helm_repository_username
-#   repository_password = var.custom_helm_repository_password
+  repository_username = var.custom_helm_repository_username
+  repository_password = var.custom_helm_repository_password
 
-#   values = [
-#     "${file("${path.root}/custom_values.yaml")}"
-#   ]
-# #  set {
-# #    name  = "global.guardian.whitelistedIps"
-# #    value = "{${local.whitelist}}"
-# #  }
+  values = [
+    yamlencode(var.custom_helm_values_yaml[each.value])
+  ]
 
-
-
-#   depends_on = [helm_release.guardian-message-broker]
-# }
+  depends_on = [helm_release.guardian-message-broker]
+}

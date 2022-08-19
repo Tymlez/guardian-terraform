@@ -13,12 +13,21 @@ metadata:
         nginx.ingress.kubernetes.io/proxy-body-size: 64m
         nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
         nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.whitelistedIps }}
-        # nginx.ingress.kubernetes.io/ssl-passthrough: "false"
 spec:
     ingressClassName: 'nginx'
     rules:
       - http:
           paths:
+            {{- if .Values.ingress.custom_helm_ingresses.enable }}
+
+            - path: {{ .Values.ingress.custom_helm_ingresses.service_path }}
+              pathType: Prefix
+              backend:
+                service:
+                  name: {{ .Values.ingress.custom_helm_ingresses.service_name }}
+                  port:
+                    number: {{ .Values.ingress.custom_helm_ingresses.service_port }}
+            {{- end}}
             - path: /api/v1(/|$)(.*)
               pathType: Prefix
               backend:
