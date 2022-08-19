@@ -53,8 +53,10 @@ spec:
               memory: "{{ .Values.resources.memory}}"
 
           envFrom:
+            {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - configMapRef:
                 name: guardian-extensions-newrelic
+            {{- end}}
             - configMapRef:
                 name: {{ include "guardian-api-gateway.fullname" . }}-{{ .Release.Revision }}         
           volumeMounts:
@@ -67,7 +69,7 @@ spec:
               mountPath: /usr/api-gateway/entrypoint.sh
               subPath: entrypoint.sh
             
-            {{ if eq .Values.global.guardian.enable_apm_name "newrelic" }}
+            {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
               mountPath: /usr/api-gateway/node_modules/@guardian/common/dist/mq/message-broker-channel.js
