@@ -6,7 +6,7 @@ variable "stage" {
 }
 
 variable "app_name" {
-  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.tymlez.com)"
+  description = "The name of the app being deployed (used for Domains e.g. $stage.$app_name.your-domain.com)"
 }
 
 variable "aws_region" {

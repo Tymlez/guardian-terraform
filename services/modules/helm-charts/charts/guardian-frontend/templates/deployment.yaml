@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "guardian-web-proxy.fullname" . }}
+  name: {{ include "guardian-frontend.fullname" . }}
   labels:
-    {{- include "guardian-web-proxy.labels" . | nindent 4 }}
+    {{- include "guardian-frontend.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "guardian-web-proxy.selectorLabels" . | nindent 6 }}
+      {{- include "guardian-frontend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "guardian-web-proxy.selectorLabels" . | nindent 8 }}
+        {{- include "guardian-frontend.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -44,8 +44,13 @@ spec:
             httpGet:
               path: /
               port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          resources: 
+            limits:
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
+            requests:
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
           volumeMounts:
             - mountPath: /etc/nginx/conf.d
               readOnly: true
@@ -53,7 +58,7 @@ spec:
       volumes:
       - name: nginx-conf
         configMap:
-          name: {{ include "guardian-web-proxy.fullname" . }}-{{ .Release.Revision }}
+          name: {{ include "guardian-frontend.fullname" . }}-{{ .Release.Revision }}
           items:
             - key: default.conf
               path: default.conf

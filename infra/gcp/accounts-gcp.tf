@@ -116,9 +116,9 @@ module "gke_cluster" {
   network      = module.platform_vpc_gcp.vpc_name
   subnetwork   = module.platform_vpc_gcp.subnet_name
 
-  depends_on = [google_project_service.cloudresourcemanager-service]
+  depends_on     = [google_project_service.cloudresourcemanager-service]
   gcp_project_id = var.gcp_project_id
-  gcp_region = var.gcp_region
+  gcp_region     = var.gcp_region
 }
 
 module "gcp_firewall" {

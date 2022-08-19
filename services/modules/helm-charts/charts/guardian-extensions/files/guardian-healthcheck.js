@@ -1,7 +1,7 @@
 const NATS = require('nats');
 const zlib = require('zlib');
 
-// node /usr/common/tymlez-healthcheck.js
+// node /usr/common/guardian-healthcheck.js
 (async () => {
   const serviceName = process.env.HEALCHECK_CHANNEL_NAME || process.env.SERVICE_CHANNEL;
   console.log("Running healthcheck for service: ", serviceName);
@@ -16,7 +16,7 @@ const zlib = require('zlib');
     const sc = NATS.StringCodec();
 
     console.log("Test NATS connection");
-    await nats.publish('TYMLEZ.healthcheck', c.encode({ message: 'TYMLEZ.healthcheck' }));
+    await nats.publish('guardian.healthcheck', c.encode({ message: 'guardian.healthcheck' }));
     console.log("Verify NATS connection : ", serviceName + '.GET_STATUS');
     console.log("start", new Date().toISOString())
     const msg = await nats.request(serviceName + '.GET_STATUS', sc.encode("{}"), { timeout: 30000 });

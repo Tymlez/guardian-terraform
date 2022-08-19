@@ -9,47 +9,47 @@ locals {
     {
       rule_number = 1 + idx
       protocol    = "-1"
-      cidr_block = val
+      cidr_block  = val
       rule_action = "allow"
     }
   ]
 
-  default =  [
+  default = [
     {
       rule_number = 200
       protocol    = "-1"
-      cidr_block = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0"
       rule_action = var.firewall_default
     }
   ]
 
   #allow all local
-  default_vpc =  [
+  default_vpc = [
     {
       rule_number = 100
       protocol    = "-1"
-      cidr_block =  "10.0.0.0/8"
+      cidr_block  = "10.0.0.0/8"
       rule_action = "allow"
     },
     {
       rule_number = 101
       protocol    = "-1"
-      cidr_block =  "172.16.0.0/12"
+      cidr_block  = "172.16.0.0/12"
       rule_action = "allow"
     },
     {
       rule_number = 102
       protocol    = "-1"
-      cidr_block =  "192.168.0.0/16"
+      cidr_block  = "192.168.0.0/16"
       rule_action = "allow"
     }
   ]
 
-  public_outbound =  [
+  public_outbound = [
     {
       rule_number = 300
       protocol    = "-1"
-      cidr_block = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0"
       rule_action = "allow"
     }
   ]
@@ -58,16 +58,16 @@ locals {
 module "vpc" {
 
   source = "registry.terraform.io/terraform-aws-modules/vpc/aws"
-  name = var.vpc_name
-  cidr = var.vpc_cidr
+  name   = var.vpc_name
+  cidr   = var.vpc_cidr
 
   azs             = var.aws_vpc_azs
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
-#  public_dedicated_network_acl   = true
-#  public_inbound_acl_rules       = concat(local.inbound_whitelisted, local.default_vpc, local.default)
-#  public_outbound_acl_rules      = local.public_outbound
+  #  public_dedicated_network_acl   = true
+  #  public_inbound_acl_rules       = concat(local.inbound_whitelisted, local.default_vpc, local.default)
+  #  public_outbound_acl_rules      = local.public_outbound
 
   enable_nat_gateway     = true
   single_nat_gateway     = true

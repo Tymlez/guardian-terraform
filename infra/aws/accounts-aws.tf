@@ -21,23 +21,23 @@ module "vpc" {
 #that then needs to be attached to the generated ALB
 module "aws-firewall" {
   source           = "./modules/aws-firewall"
-  stage             = var.stage
+  stage            = var.stage
   firewall_default = var.firewall_default
-  whitelisted_ips = var.whitelisted_ips
+  whitelisted_ips  = var.whitelisted_ips
 }
 
 module "eks_cluster" {
-  source       = "./modules/eks-cluster"
-  cluster_name = var.cluster_name
-  vpc_id       = module.vpc.vpc_id
-  vpc_name     = module.vpc.vpc_name
-  subnets      = module.vpc.private_subnet_ids
-  whitelisted_ips = var.whitelisted_ips
+  source           = "./modules/eks-cluster"
+  cluster_name     = var.cluster_name
+  vpc_id           = module.vpc.vpc_id
+  vpc_name         = module.vpc.vpc_name
+  subnets          = module.vpc.private_subnet_ids
+  whitelisted_ips  = var.whitelisted_ips
   firewall_default = var.firewall_default
-  aws_region   = var.aws_region
-  app_name     = var.app_name
-  stage        = var.stage
-  tld          = var.tld
+  aws_region       = var.aws_region
+  app_name         = var.app_name
+  stage            = var.stage
+  tld              = var.tld
 
   aws_user_eks = var.aws_user_eks
   aws_role_eks = var.aws_role_eks

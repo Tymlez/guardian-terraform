@@ -6,10 +6,13 @@ data:
   MQ_ADDRESS: message-broker
   DB_HOST: mongodb
   DB_DATABASE: guardian_db
-  SERVICE_CHANNEL: "guardian.1"
-  OPERATOR_ID: {{ .Values.global.guardian.operatorId }}
-  OPERATOR_KEY: {{ .Values.global.guardian.operatorKey }}
-  SCHEMA_TOPIC_ID: {{ .Values.global.guardian.topicId }}
+  SERVICE_CHANNEL: "guardians"
   MAX_TRANSACTION_FEE: {{ .Values.global.guardian.maxTransactionFee | quote }}
   INITIAL_BALANCE: {{ .Values.global.guardian.initialBalance | quote }}
- 
+  INITIAL_STANDARD_REGISTRY_BALANCE: "{{ .Values.global.guardian.initialStandardRegistryBalance}}"
+  INITIALIZATION_TOPIC_ID: "{{ .Values.global.guardian.initializationTopicId}}"
+  HEDERA_NET: "{{ .Values.global.guardian.network}}"
+  MESSAGE_LANG: "en-US"
+  LOG_LEVEL: "{{ .Values.global.guardian.logLevel}}"
+  ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
+  NEW_RELIC_APP_NAME: "{{ include "guardian-guardian-service.fullname" . }}"

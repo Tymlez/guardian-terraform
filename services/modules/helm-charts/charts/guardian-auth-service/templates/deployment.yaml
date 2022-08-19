@@ -35,7 +35,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.global.guardian.version | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: p3004
@@ -44,48 +44,53 @@ spec:
           command: ["/bin/sh"]
           args: ["entrypoint.sh"]
           livenessProbe:
-            {{- toYaml .Values.global.livenessProbe | nindent 12 }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.global.readinessProbe | nindent 12 }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources: 
+            limits:
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
+            requests:
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
           envFrom:
             - configMapRef:
                 name: {{ include "guardian-auth-service.fullname" . }}-{{ .Release.Revision }}
             - secretRef:
                 name: {{ include "guardian-auth-service.fullname" . }}-{{ .Release.Revision }}
+            {{- if eq .Values.global.guardian.enable_apm_name "newrelic"}}
             - configMapRef:
-                name: {{ .Release.Name }}-tymlez-extensions-newrelic
+                name: guardian-extensions-newrelic
+            {{- end }}
           volumeMounts:
-            - name: files
+            - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/auth-service/tymlez-healthcheck.js
-              subPath: tymlez-healthcheck.js
-            - name: files
+              mountPath: /usr/auth-service/guardian-healthcheck.js
+              subPath: guardian-healthcheck.js
+            - name: guardian-extensions-files
               readOnly: true
               mountPath: /usr/auth-service/entrypoint.sh
               subPath: entrypoint.sh
-            - name: files
+            
+            {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
+            - name: guardian-extensions-files
               readOnly: true
               mountPath: /usr/auth-service/node_modules/@guardian/common/dist/mq/message-broker-channel.js
-              subPath: mq.js
-            - name: files
-              readOnly: true
-              mountPath: /usr/auth-service/dist/tymlez.js
-              subPath: tymlez.js
+              subPath: message-broker-channel.js
+            {{- end }}
+
       volumes:
-        - name: files
+        - name: guardian-extensions-files
           configMap:
-            name: {{ .Release.Name}}-tymlez-extensions-files
+            name: guardian-extensions-files
             items:
-              - key: tymlez-healthcheck.js
-                path: tymlez-healthcheck.js
               - key: entrypoint.sh
                 path: entrypoint.sh
-              - key: mq.js
-                path: mq.js
-              - key: tymlez.js
-                path: tymlez.js
+              - key: message-broker-channel.js
+                path: message-broker-channel.js     
+              - key: guardian-healthcheck.js
+                path: guardian-healthcheck.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
