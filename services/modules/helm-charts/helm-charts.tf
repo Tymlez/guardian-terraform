@@ -1,5 +1,5 @@
 locals {
-  ingress_whitelisted_ips = tostring(format("%s", join(",", var.ingress_whitelisted_ips)))
+  ingress_whitelisted_ips = tostring(format("%s", join("\\,", var.ingress_whitelisted_ips)))
   enable_apm_name         = var.enabled_newrelic ? "newrelic" : ""
 }
 
@@ -509,12 +509,13 @@ resource "helm_release" "guardian-extensions" {
   force_update = true
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}",
-    yamlencode({
-      ingress = {
-        whitelistedIps = local.ingress_whitelisted_ips
-      }
-    })
+
   ]
+
+  set {
+    name  = "ingress.whitelistedIps"
+    value = local.ingress_whitelisted_ips
+  }
 
   set {
     name  = "global.enable_newrelic"
