@@ -32,6 +32,8 @@ variable "custom_helm_repository_username" {}
 variable "custom_helm_repository_password" {}
 variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
+variable "custom_helm_values_yaml" {}
+variable "custom_helm_ingresses" {}
 variable "gcp_service_account" {}
 
 variable "enabled_newrelic" {

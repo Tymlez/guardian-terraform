@@ -105,6 +105,15 @@ variable "custom_helm_repository_username" {}
 variable "custom_helm_repository_password" {}
 variable "custom_helm_charts" {}
 variable "custom_helm_version" {}
+variable "custom_helm_values_yaml" {}
+variable "custom_helm_ingresses" {
+  default = {
+    enable       = false
+    service_port = ""
+    service_name = ""
+    service_path = ""
+  }
+}
 # APM
 variable "enabled_newrelic" {}
 variable "newrelic_license_key" {}

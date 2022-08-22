@@ -75,12 +75,26 @@ guardian_initial_standard_registry_balance = "100"
 guardian_logger_level        = 2
 guardian_mongodb_persistent_size = 50Gi
 
-#custom Helm repositories will be activated if the custom_helm_charts variable is populated
-#custom_helm_repository = "https://charts.your-domain.com"
-#custom_helm_charts = ["chart1", "chart2"]
-#custom_helm_version = "latest"
-#custom_helm_repository_username = "helm_username"
-#custom_helm_repository_password = "helm_password"
+#custom_helm_repository = "https://charts.bitnami.com/bitnami"
+#custom_helm_charts     = ["nginx"]
+#custom_helm_version    = "13.1.8"
+#custom_helm_values_yaml = {
+#  "nginx" = {
+#    image = {
+#      tag = "latest"
+#    }
+#  }
+#}
+#custom_helm_repository_username = ""
+#custom_helm_repository_password = ""
+
+# if you want expose your service via ingress, this only works when use_ingress is true
+#custom_helm_ingresses = {
+#  enable       = true
+#  service_path = "/your-api(/|$)(.*)"
+#  service_port = 9090 // the port that your service listen on
+#  service_name = "your k8s service name in same name spaces"
+#}
 
 
 # to enable newrelic APM
