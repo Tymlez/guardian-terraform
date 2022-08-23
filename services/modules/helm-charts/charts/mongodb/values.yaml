@@ -1,3 +1,5 @@
+image:
+  tag: 5.0.9-debian-10-r19
 persistence:
   size: 50Gi
 useStatefulSet: true
