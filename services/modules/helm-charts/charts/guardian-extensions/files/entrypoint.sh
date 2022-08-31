@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -ex
 case "$ENABLE_APM_NAME" in
     "newrelic")

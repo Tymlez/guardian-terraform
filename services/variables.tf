@@ -10,6 +10,10 @@ variable "aws_region" {
   default = "ap-southeast-2"
 }
 
+variable "aws_zone" {
+  default = "ap-southeast-2a"
+}
+
 variable "aws_vpc_azs" {
   type    = list(any)
   default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
@@ -98,7 +102,53 @@ variable "ingress_whitelisted_ips" {
   default = "{0.0.0.0/0}"
 }
 variable "firewall_default" {}
-variable "resource_configs" {}
+variable "resource_configs" {
+  default = {
+  # Custom container size
+    guardian_logger_service = {
+        cpu    = "250m",
+        memory = "256Mi",
+        replicas  = 1,
+        autoscale = false
+      }
+    guardian_auth_service = {
+        cpu    = "250m",
+        memory = "256Mi",
+        replicas  = 1,
+        autoscale = false
+      }
+      guardian_ipfs_client = {
+        cpu    = "250m",
+        memory = "256Mi",
+        replicas  = 1,
+        autoscale = false
+      }
+      guardian_api_gateway = {
+        cpu    = "500m",
+        memory = "256Mi",
+        replicas  = 1,
+        autoscale = false
+      }
+      guardian_guardian_service ={
+        cpu    = "500m",
+        memory = "256Mi",
+        replicas  = 2,
+        autoscale = false
+      }
+      guardian_frontend = {
+        cpu       = "100m",
+        memory    = "128Mi",
+        replicas  = 1,
+        autoscale = false
+      }
+      nats ={
+        cpu    = "500m",
+        memory = "256Mi",
+        replicas  = 1,
+        autoscale = false
+      }
+  }
+}
 
 variable "custom_helm_repository" {}
 variable "custom_helm_repository_username" {}

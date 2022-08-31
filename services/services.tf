@@ -38,4 +38,5 @@ module "helm-charts" {
   resource_configs                           = var.resource_configs
   use_ingress                                = var.use_ingress
   guardian_mongodb_persistent_size           = var.guardian_mongodb_persistent_size
+  aws_zone                                   = var.aws_zone #for zone PVC affini
 }

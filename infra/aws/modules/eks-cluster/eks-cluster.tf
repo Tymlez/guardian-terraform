@@ -7,7 +7,6 @@ resource "aws_kms_key" "eks" {
 module "eks" {
   source          = "registry.terraform.io/terraform-aws-modules/eks/aws"
   cluster_name    = var.cluster_name
-  cluster_version = "1.22"
 
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
@@ -80,13 +79,13 @@ module "eks" {
   # If you want to use only fargate you must follow docs `(Optional) Update CoreDNS`
   # available under https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html
   # This cannot be done via Terraform right now unless you create your own CoreDNS image and use it.
+
   eks_managed_node_groups = {
 
     green = {
-      min_size     = var.eks_config.min_size
-      max_size     = var.eks_config.max_size
-      desired_size = var.eks_config.desired_size
-
+      min_size       = var.eks_config.min_size
+      max_size       = var.eks_config.max_size
+      desired_size   = var.eks_config.desired_size
       instance_types = var.eks_config.instance_types
       capacity_type  = var.eks_config.capacity_type
     }

@@ -10,19 +10,27 @@
 aws_access_key_id     = "AKIA..."
 aws_secret_access_key = "..."
 
+aws_region = "ap-southeast-2"
+aws_zone = "ap-southeast-2a"
+
 #Do you need to grant a particular user access to the EKS cluster (might be different from the credentials above?)
 #This is required if you are using AWS SSO to manage your users
 aws_user_eks = "arn:aws:iam::123456789:user/AWSReservedSSO_AdministratorAccess_b036e5/user.name@tymlez.com"
 aws_role_eks = "arn:aws:iam::123456789:role/AWSReservedSSO_AdministratorAccess_b036e5"
 
+#this should ideally match the desired_size of the EKS cluster size below to avoid SPOT instances
+#being reclaimed and assigning to different volume groups that break volume affinity
+aws_vpc_azs = ["ap-southeast-2a", "ap-southeast-2b","ap-southeast-2c"]
+
 #EKS Cluster Size
 eks_config = {
-  instance_types = ["t3a.xlarge"]
+  instance_types = ["t4a.xlarge"]
   min_size       = 1
   max_size       = 3
-  desired_size   = 2
+  desired_size   = 3
   capacity_type  = "SPOT"
 }
+
 ################################################################################
 # GCP Required Variables
 ################################################################################
@@ -49,6 +57,7 @@ vpc_cidr = "10.0.0.0/16"
 firewall_default = "deny"
 whitelisted_ips  = ["8.8.8.8/32", "1.2.3.4/32"]
 ingress_whitelisted_ips = ["0.0.0.0/0", "123.123.123.123/32"]
+
 #please note - our FQDN convention is:
 #cluster_name.stage.app_name.tld
 #e.g: guardian.dev.tymlez.tymlez.com
@@ -57,7 +66,8 @@ app_name     = "tymlez" #or customer name
 cluster_name = "guardian-cluster"
 tld          = "tymlez.com"
 stage        = "dev"
-use_ingress = true
+
+
 docker_repository = "gcr.io/hedera-registry"
 
 #Guardian Requirements
@@ -73,8 +83,9 @@ guardian_max_transaction_fee = "10"
 guardian_initial_balance     = "30"
 guardian_initial_standard_registry_balance = "100"
 guardian_logger_level        = 2
-guardian_mongodb_persistent_size = 50Gi
+guardian_mongodb_persistent_size = "50Gi"
 
+## uncomment this if you want to add some extra charts to the stack
 #custom_helm_repository = "https://charts.bitnami.com/bitnami"
 #custom_helm_charts     = ["nginx"]
 #custom_helm_version    = "13.1.8"
@@ -96,6 +107,7 @@ guardian_mongodb_persistent_size = 50Gi
 #  service_name = "your k8s service name in same name spaces"
 #}
 
+use_ingress = true
 
 # to enable newrelic APM
 enabled_newrelic=false

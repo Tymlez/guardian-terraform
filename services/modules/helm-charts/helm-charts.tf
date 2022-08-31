@@ -8,6 +8,8 @@ resource "helm_release" "mongodb" {
   chart      = "mongodb"
   repository = "https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami"
   version    = "10.30.0"
+  reuse_values = true
+
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/mongodb/values.yaml")}",
@@ -22,6 +24,12 @@ resource "helm_release" "mongodb" {
   set {
     name  = "persistence.size"
     value = var.guardian_mongodb_persistent_size
+  }
+
+  #force mongo to be on the same AWS Zone (not needed for GCP) 💩
+  set {
+    name = "controller.nodeSelector"
+    value = "topology.kubernetes.io/zone=${var.aws_zone}"
   }
 }
 
@@ -562,7 +570,11 @@ resource "helm_release" "guardian-extensions" {
 
 
 resource "helm_release" "extensions" {
-  for_each   = toset(var.custom_helm_charts)
+  for_each = {
+    for charts in var.custom_helm_charts : charts => charts
+    if length(var.custom_helm_charts) > 0
+  }
+
   name       = each.value
   chart      = each.value
   repository = var.custom_helm_repository
@@ -571,7 +583,7 @@ resource "helm_release" "extensions" {
   repository_password = var.custom_helm_repository_password
 
   values = [
-    yamlencode(var.custom_helm_values_yaml[each.value])
+    try(yamlencode(var.custom_helm_values_yaml[each.value]), "{}")
   ]
 
   depends_on = [helm_release.guardian-message-broker]

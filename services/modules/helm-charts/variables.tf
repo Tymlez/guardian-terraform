@@ -101,3 +101,6 @@ variable "resource_configs" {
     }
   }
 }
+
+variable "aws_zone" {}
+

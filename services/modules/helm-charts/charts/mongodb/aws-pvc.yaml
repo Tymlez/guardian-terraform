@@ -8,8 +8,11 @@ parameters:
 provisioner: kubernetes.io/aws-ebs
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
-allowedTopologies:
-- matchLabelExpressions:
-  - key: failure-domain.beta.kubernetes.io/zone
-    values:
-    - ap-southeast-2a
+#allowedTopologies:
+#- matchLabelExpressions:
+#  - key: failure-domain.beta.kubernetes.io/zone
+#    values:
+#    - ap-southeast-2a
+#  - key: topology.kubernetes.io/zone
+#    values:
+#    - ap-southeast-2a
