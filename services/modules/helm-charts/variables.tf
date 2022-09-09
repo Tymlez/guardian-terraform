@@ -93,8 +93,22 @@ variable "resource_configs" {
       autoscale = false
     }
 
+    guardian_guardian_service = {
+      cpu       = "400m",
+      memory    = "512Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+
     nats = {
       cpu       = "500m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+
+    guardian_worker_service = {
+      cpu       = "300m",
       memory    = "256Mi",
       replicas  = 1,
       autoscale = false
@@ -103,4 +117,3 @@ variable "resource_configs" {
 }
 
 variable "aws_zone" {}
-

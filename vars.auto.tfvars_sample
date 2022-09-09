@@ -18,13 +18,14 @@ aws_zone = "ap-southeast-2a"
 aws_user_eks = "arn:aws:iam::123456789:user/AWSReservedSSO_AdministratorAccess_b036e5/user.name@tymlez.com"
 aws_role_eks = "arn:aws:iam::123456789:role/AWSReservedSSO_AdministratorAccess_b036e5"
 
-#this should ideally match the desired_size of the EKS cluster size below to avoid SPOT instances
-#being reclaimed and assigning to different volume groups that break volume affinity
+#Please be aware that if using SPOT instances there is no guarantee that they will be able to be placed into all 3 availability zones
+#This means it is entirely possible that your PVC will be in a different region than MongoDB breaking the cluster 💩
+#To solve this you can fix the aws_vpc_azs to a single AZ and set eks_config to 1 1 1 and t3a.2xlarge
 aws_vpc_azs = ["ap-southeast-2a", "ap-southeast-2b","ap-southeast-2c"]
 
 #EKS Cluster Size
 eks_config = {
-  instance_types = ["t4a.xlarge"]
+  instance_types = ["t3a.xlarge"]
   min_size       = 1
   max_size       = 3
   desired_size   = 3
@@ -73,7 +74,7 @@ docker_repository = "gcr.io/hedera-registry"
 #Guardian Requirements
 guardian_operator_id         = "0.0.12345678"
 guardian_operator_key        = "<operator key>"
-guardian_ipfs_key            = "<nft / ipfs service key here>"
+guardian_ipfs_key            = "<nft / ipfs service key here>" #please note for >=2.4.0 this should be web3.storage
 guardian_topic_id            = "0.0.12345678"
 guardian_access_token_secret = "supersecretsauce"
 guardian_static_ip           = ""
@@ -85,20 +86,22 @@ guardian_initial_standard_registry_balance = "100"
 guardian_logger_level        = 2
 guardian_mongodb_persistent_size = "50Gi"
 
-## uncomment this if you want to add some extra charts to the stack
-#custom_helm_repository = "https://charts.bitnami.com/bitnami"
-#custom_helm_charts     = ["nginx"]
-#custom_helm_version    = "13.1.8"
-#custom_helm_values_yaml = {
-#  "nginx" = {
-#    image = {
-#      tag = "latest"
-#    }
-#  }
-#}
-#custom_helm_repository_username = ""
-#custom_helm_repository_password = ""
+#custom Helm repositories will be activated if the custom_helm_charts variable is populated
+custom_helm_repository = ""
+custom_helm_charts = []
+custom_helm_version = ""
+#this is an example of how to provide custom YAML for the charts you provide above
+#this would work for a chart named `nginx` and would provide image.tag = latest
+custom_helm_values_yaml = {
+  "nginx" = {
+    image = {
+      tag = "latest"
+    }
+  }
+}
 
+custom_helm_repository_username = ""
+custom_helm_repository_password = ""
 # if you want expose your service via ingress, this only works when use_ingress is true
 #custom_helm_ingresses = {
 #  enable       = true

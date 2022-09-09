@@ -113,7 +113,7 @@ resource "helm_release" "guardian-message-broker" {
     name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-message-broker/**") : filesha1(f)]))
   }
-  depends_on = []
+  depends_on = [helm_release.extensions]
 }
 
 resource "helm_release" "guardian-logger-service" {
@@ -163,7 +163,7 @@ resource "helm_release" "guardian-logger-service" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-logger-service/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.mongodb, helm_release.guardian-message-broker]
+  depends_on = [helm_release.mongodb, helm_release.extensions, helm_release.guardian-message-broker]
 
 }
 
@@ -219,7 +219,7 @@ resource "helm_release" "guardian-auth-service" {
     name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-auth-service/**") : filesha1(f)]))
   }
-  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
 }
 
 resource "helm_release" "guardian-api-gateway" {
@@ -271,7 +271,7 @@ resource "helm_release" "guardian-api-gateway" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-api-gateway/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
 }
 
 resource "helm_release" "guardian-guardian-service" {
@@ -362,7 +362,7 @@ resource "helm_release" "guardian-guardian-service" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-guardian-service/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
 
 }
 
@@ -421,7 +421,7 @@ resource "helm_release" "guardian-frontend" {
   }
 
 
-  depends_on = [helm_release.guardian-api-gateway]
+  depends_on = [helm_release.guardian-api-gateway, helm_release.extensions]
 }
 
 resource "helm_release" "guardian-ipfs-client" {
@@ -476,7 +476,54 @@ resource "helm_release" "guardian-ipfs-client" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-ipfs-client/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
+}
+
+resource "helm_release" "guardian-worker-service" {
+  name  = "guardian-worker-service"
+  chart = "${path.root}/modules/helm-charts/charts/guardian-worker-service"
+  #  repository = "${var.docker_repository}/ipfs-client"
+
+  timeout = "180"
+
+  values = [
+    "${file("${path.root}/modules/helm-charts/charts/guardian-worker-service/values.yaml")}"
+  ]
+
+  set {
+    name  = "image.repository"
+    value = "${var.docker_repository}/worker-service"
+  }
+
+  set {
+    name  = "image.tag"
+    value = var.guardian_version
+  }
+
+  set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
+
+  set {
+    name  = "resources.cpu"
+    value = var.resource_configs.guardian_worker_service.cpu
+  }
+  set {
+    name  = "resources.memory"
+    value = var.resource_configs.guardian_worker_service.memory
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_worker_service.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_worker_service.autoscale
+  }
+
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 }
 
 resource "helm_release" "vault" {
@@ -484,7 +531,7 @@ resource "helm_release" "vault" {
   chart      = "vault"
   repository = "https://helm.releases.hashicorp.com"
 
-  depends_on = [helm_release.guardian-message-broker]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 }
 
 
@@ -565,6 +612,8 @@ resource "helm_release" "guardian-extensions" {
     name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-extensions/**") : filesha1(f)]))
   }
+
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 
 }
 
