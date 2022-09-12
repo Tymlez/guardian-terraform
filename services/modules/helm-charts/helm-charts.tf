@@ -113,7 +113,6 @@ resource "helm_release" "guardian-message-broker" {
     name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-message-broker/**") : filesha1(f)]))
   }
-  depends_on = [helm_release.extensions]
 }
 
 resource "helm_release" "guardian-logger-service" {
