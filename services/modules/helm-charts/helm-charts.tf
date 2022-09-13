@@ -533,7 +533,6 @@ resource "helm_release" "guardian-worker-service" {
 #  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 #}
 
-
 resource "helm_release" "ingress-nginx" {
   count      = var.use_ingress ? 1 : 0
   name       = "ingress-nginx"

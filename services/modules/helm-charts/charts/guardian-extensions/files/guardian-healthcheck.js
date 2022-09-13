@@ -3,7 +3,7 @@ const zlib = require('zlib');
 
 // node /usr/common/guardian-healthcheck.js
 (async () => {
-  const serviceName = process.env.HEALCHECK_CHANNEL_NAME || process.env.SERVICE_CHANNEL;
+  const serviceName = process.env.HEALTHCHECK_CHANNEL_NAME || process.env.SERVICE_CHANNEL;
   console.log("Running healthcheck for service: ", serviceName);
   let alive = true;
   const nats = await NATS.connect({
@@ -52,7 +52,7 @@ const zlib = require('zlib');
             reject(new Error("Healthcheck failed"))
         }
         resolve()
-    }, 5000)
+    }, 1000)
    })
 
     // await nats.request('logger-service.GET_LOGS', sc.encode("{}"));
