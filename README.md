@@ -31,7 +31,7 @@ or do `gcloud services enable cloudresourcemanager.googleapis.com`
 
  
 ## Setup for deployment to AWS (EKS)
-On AWS we deploy to EKS using a managed node group of 2 t3a.xlarge SPOT instances by default (we recommend a larger setup for Production to handle SPOT reclamation)
+On AWS we deploy to EKS using a managed node group of 1 x t3a.medium ON_DEMAND instance and 2 t3a.large SPOT instances by default (we recommend a larger setup for Production to handle SPOT reclamation)
 Fargate is not able to be used right now due to issues with EBS, Zones and Terraform.
 
 Steps:

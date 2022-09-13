@@ -53,6 +53,19 @@ locals {
       rule_action = "allow"
     }
   ]
+  #I have no idea why this is required in Terraform
+  #referencing them directly in the module fails
+  az1_name = try(var.aws_vpc_config.az1.az_name)
+  az2_name = try(var.aws_vpc_config.az2.az_name)
+  az3_name = try(var.aws_vpc_config.az3.az_name)
+  
+  az1_private = try(var.aws_vpc_config.az1.private_subnet)
+  az2_private = try(var.aws_vpc_config.az2.private_subnet)
+  az3_private = try(var.aws_vpc_config.az3.private_subnet)
+  
+  az1_public = try(var.aws_vpc_config.az1.public_subnet)
+  az2_public = try(var.aws_vpc_config.az2.public_subnet)
+  az3_public = try(var.aws_vpc_config.az3.public_subnet)
 }
 
 module "vpc" {
@@ -61,9 +74,9 @@ module "vpc" {
   name   = var.vpc_name
   cidr   = var.vpc_cidr
 
-  azs             = var.aws_vpc_azs
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  azs             = [local.az1_name,local.az2_name,local.az3_name]
+  private_subnets = [local.az1_private,local.az2_private,local.az3_private]
+  public_subnets  = [local.az1_public,local.az2_public,local.az3_public]
 
   #  public_dedicated_network_acl   = true
   #  public_inbound_acl_rules       = concat(local.inbound_whitelisted, local.default_vpc, local.default)

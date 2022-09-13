@@ -18,17 +18,41 @@ aws_zone = "ap-southeast-2a"
 aws_user_eks = "arn:aws:iam::123456789:user/AWSReservedSSO_AdministratorAccess_b036e5/user.name@tymlez.com"
 aws_role_eks = "arn:aws:iam::123456789:role/AWSReservedSSO_AdministratorAccess_b036e5"
 
-#Please be aware that if using SPOT instances there is no guarantee that they will be able to be placed into all 3 availability zones
-#This means it is entirely possible that your PVC will be in a different region than MongoDB breaking the cluster 💩
-#To solve this you can fix the aws_vpc_azs to a single AZ and set eks_config to 1 1 1 and t3a.2xlarge
-aws_vpc_azs = ["ap-southeast-2a", "ap-southeast-2b","ap-southeast-2c"]
+#VPC Setup - required for EKS
+aws_vpc_config = {
+  az1 = {
+    az_name        = "ap-southeast-2a"
+    private_subnet = "10.0.1.0/24"
+    public_subnet  = "10.0.101.0/24"
+  }
+  az2 = {
+    az_name        = "ap-southeast-2b"
+    private_subnet = "10.0.2.0/24"
+    public_subnet  = "10.0.102.0/24"
+  }
+  az3 = {
+    az_name        = "ap-southeast-2c"
+    private_subnet = "10.0.3.0/24"
+    public_subnet  = "10.0.103.0/24"
+  }
+}
 
 #EKS Cluster Size
+#Values are per node group
 eks_config = {
-  instance_types = ["t3a.xlarge"]
+  az1 = {
+    instance_types = ["t3a.medium"]
+    min_size       = 1
+    max_size       = 1
+    desired_size   = 1
+#  ami_type       = "AL2_ARM_64"
+  capacity_type  = "ON_DEMAND" #this is to ensure that the nodegroup doesnt get reclaimed as SPOT leaving MongoDB broken
+  }
+  instance_types = ["t3a.large"]
   min_size       = 1
-  max_size       = 3
-  desired_size   = 3
+  max_size       = 1
+  desired_size   = 1
+#  ami_type       = "AL2_ARM_64"
   capacity_type  = "SPOT"
 }
 
@@ -78,7 +102,7 @@ guardian_ipfs_key            = "<nft / ipfs service key here>" #please note for 
 guardian_topic_id            = "0.0.12345678"
 guardian_access_token_secret = "supersecretsauce"
 guardian_static_ip           = ""
-guardian_version             = "2.3.1" #or "latest"
+guardian_version             = "2.4.1" #must be > 2.4.1 as new services were added
 guardian_network             = "testnet"
 guardian_max_transaction_fee = "10"
 guardian_initial_balance     = "30"

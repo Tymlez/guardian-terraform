@@ -525,13 +525,13 @@ resource "helm_release" "guardian-worker-service" {
   depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 }
 
-resource "helm_release" "vault" {
-  name       = "vault"
-  chart      = "vault"
-  repository = "https://helm.releases.hashicorp.com"
-
-  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
-}
+#resource "helm_release" "vault" {
+#  name       = "vault"
+#  chart      = "vault"
+#  repository = "https://helm.releases.hashicorp.com"
+#
+#  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
+#}
 
 
 resource "helm_release" "ingress-nginx" {
