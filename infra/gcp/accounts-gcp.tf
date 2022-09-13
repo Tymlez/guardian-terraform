@@ -101,7 +101,7 @@ module "platform_vpc_gcp" {
   source         = "./modules/gcp-vpc"
   vpc_name       = var.vpc_name
   vpc_cidr       = var.vpc_cidr
-  subnet_name    = "platform-subnet"
+  subnet_name    = "${var.stage}-platform-subnet"
   region         = var.gcp_region
   gcp_project_id = var.gcp_project_id
 

@@ -278,7 +278,7 @@ resource "helm_release" "guardian-guardian-service" {
   chart      = "${path.root}/modules/helm-charts/charts/guardian-guardian-service"
   repository = "${var.docker_repository}/guardian-service"
 
-  timeout = "180"
+  timeout = "360"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-guardian-service/values.yaml")}"
@@ -428,7 +428,7 @@ resource "helm_release" "guardian-ipfs-client" {
   chart = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
   #  repository = "${var.docker_repository}/ipfs-client"
 
-  timeout = "180"
+  timeout = "360"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-ipfs-client/values.yaml")}"
