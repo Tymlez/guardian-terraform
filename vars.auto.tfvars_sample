@@ -184,6 +184,12 @@ resource_configs = {
       replicas  = 1,
       autoscale = false
     }
+    guardian_worker_service = {
+      cpu       = "300m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
 }
 
 
