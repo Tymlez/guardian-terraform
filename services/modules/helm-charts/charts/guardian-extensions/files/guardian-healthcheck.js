@@ -18,18 +18,42 @@ const zlib = require('zlib');
     console.log("Test NATS connection");
     await nats.publish('guardian.healthcheck', c.encode({ message: 'guardian.healthcheck' }));
     console.log("Verify NATS connection : ", serviceName + '.GET_STATUS');
+
     console.log("start", new Date().toISOString())
-    const msg = await nats.request(serviceName + '.GET_STATUS', sc.encode("{}"), { timeout: 30000 });
-    const unpackedString = zlib.inflateSync(Buffer.from(NATS.StringCodec().decode(msg.data), 'binary')).toString();
+    const head = NATS.headers();
+    const messageId = new Date().toISOString();
+    head.append('messageId', messageId);
+    let healthcheckRes = null;
 
-    const res = JSON.parse(unpackedString);
-    console.log("Nats response: ", res);
-
-    console.log("End", new Date().toISOString())
-
-    if (res.body !== 'READY') {
-      throw new Error("Service is not ready");
+    const fn = async (_sub) => {
+        for await (const m of _sub) {
+            if (!m.headers) {
+                console.error('No headers');
+                return;
+            }
+            const messageIdRes = m.headers.get('messageId');
+            if (messageId === messageIdRes) {
+                healthcheckRes = JSON.parse(NATS.StringCodec().decode(m.data));
+            }
+        }
     }
+
+    fn(nats.subscribe('response-message', { queue: process.env.SERVICE_CHANNEL })).then();
+
+
+    await nats.request(serviceName + '.GET_STATUS', sc.encode("{}"), { timeout: 30000, headers: head });
+
+   await new Promise((resolve, reject) =>{
+    setTimeout(() => {
+        if(healthcheckRes && healthcheckRes.body === 'READY' ) {
+            console.log("Service is ready")
+        }
+        else{
+            reject(new Error("Healthcheck failed"))
+        }
+        resolve()
+    }, 5000)
+   })
 
     // await nats.request('logger-service.GET_LOGS', sc.encode("{}"));
   } catch (e) {
