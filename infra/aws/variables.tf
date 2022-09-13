@@ -18,7 +18,7 @@ variable "aws_zone" {
 }
 
 variable "aws_vpc_config" {
-  type    = any
+  type = any
 }
 
 variable "vpc_name" {}

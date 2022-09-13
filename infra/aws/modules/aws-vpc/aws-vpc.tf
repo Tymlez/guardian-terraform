@@ -58,11 +58,11 @@ locals {
   az1_name = try(var.aws_vpc_config.az1.az_name)
   az2_name = try(var.aws_vpc_config.az2.az_name)
   az3_name = try(var.aws_vpc_config.az3.az_name)
-  
+
   az1_private = try(var.aws_vpc_config.az1.private_subnet)
   az2_private = try(var.aws_vpc_config.az2.private_subnet)
   az3_private = try(var.aws_vpc_config.az3.private_subnet)
-  
+
   az1_public = try(var.aws_vpc_config.az1.public_subnet)
   az2_public = try(var.aws_vpc_config.az2.public_subnet)
   az3_public = try(var.aws_vpc_config.az3.public_subnet)
@@ -74,9 +74,9 @@ module "vpc" {
   name   = var.vpc_name
   cidr   = var.vpc_cidr
 
-  azs             = [local.az1_name,local.az2_name,local.az3_name]
-  private_subnets = [local.az1_private,local.az2_private,local.az3_private]
-  public_subnets  = [local.az1_public,local.az2_public,local.az3_public]
+  azs             = [local.az1_name, local.az2_name, local.az3_name]
+  private_subnets = [local.az1_private, local.az2_private, local.az3_private]
+  public_subnets  = [local.az1_public, local.az2_public, local.az3_public]
 
   #  public_dedicated_network_acl   = true
   #  public_inbound_acl_rules       = concat(local.inbound_whitelisted, local.default_vpc, local.default)

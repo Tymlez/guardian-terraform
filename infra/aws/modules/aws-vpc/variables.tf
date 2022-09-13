@@ -11,7 +11,7 @@ variable "stage" {
 }
 
 variable "aws_vpc_config" {
-  type    = any
+  type = any
 }
 
 variable "app_name" {

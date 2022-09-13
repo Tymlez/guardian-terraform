@@ -38,7 +38,7 @@ locals {
 #import the EKS cluster from infra
 #as above
 data "aws_eks_cluster" "cluster" {
-  name  = var.cluster_name
+  name = var.cluster_name
 }
 
 #create dependency to above

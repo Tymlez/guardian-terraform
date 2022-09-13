@@ -4,10 +4,10 @@ locals {
 }
 
 resource "helm_release" "mongodb" {
-  name       = "mongodb"
-  chart      = "mongodb"
-  repository = "https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami"
-  version    = "10.30.0"
+  name         = "mongodb"
+  chart        = "mongodb"
+  repository   = "https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami"
+  version      = "10.30.0"
   reuse_values = true
 
 
@@ -28,7 +28,7 @@ resource "helm_release" "mongodb" {
 
   #force mongo to be on the same AWS Zone (not needed for GCP) 💩
   set {
-    name = "controller.nodeSelector"
+    name  = "controller.nodeSelector"
     value = "topology.kubernetes.io/zone=${var.aws_zone}"
   }
 }

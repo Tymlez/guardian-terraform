@@ -5,8 +5,8 @@ resource "aws_kms_key" "eks" {
 }
 
 module "eks" {
-  source          = "registry.terraform.io/terraform-aws-modules/eks/aws"
-  cluster_name    = var.cluster_name
+  source       = "registry.terraform.io/terraform-aws-modules/eks/aws"
+  cluster_name = var.cluster_name
 
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
