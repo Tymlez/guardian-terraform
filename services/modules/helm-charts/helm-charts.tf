@@ -149,7 +149,7 @@ resource "helm_release" "guardian-logger-service" {
   }
   set {
     name  = "image.tag"
-    value = var.guardian_version
+    value = "2.3.1" #var.guardian_version
   }
 
   set {
