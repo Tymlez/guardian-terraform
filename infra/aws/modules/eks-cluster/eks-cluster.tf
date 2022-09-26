@@ -5,8 +5,8 @@ resource "aws_kms_key" "eks" {
 }
 
 module "eks" {
-  source          = "registry.terraform.io/terraform-aws-modules/eks/aws"
-  cluster_name    = var.cluster_name
+  source       = "registry.terraform.io/terraform-aws-modules/eks/aws"
+  cluster_name = var.cluster_name
 
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
@@ -81,8 +81,24 @@ module "eks" {
   # This cannot be done via Terraform right now unless you create your own CoreDNS image and use it.
 
   eks_managed_node_groups = {
-
-    green = {
+    az1 = {
+      subnet_ids     = [element(var.subnets, 0)]
+      min_size       = var.eks_config.az1.min_size
+      max_size       = var.eks_config.az1.max_size
+      desired_size   = var.eks_config.az1.desired_size
+      instance_types = var.eks_config.az1.instance_types
+      capacity_type  = var.eks_config.az1.capacity_type
+    }
+    az2 = {
+      subnet_ids     = [element(var.subnets, 1)]
+      min_size       = var.eks_config.min_size
+      max_size       = var.eks_config.max_size
+      desired_size   = var.eks_config.desired_size
+      instance_types = var.eks_config.instance_types
+      capacity_type  = var.eks_config.capacity_type
+    }
+    az3 = {
+      subnet_ids     = [element(var.subnets, 2)]
       min_size       = var.eks_config.min_size
       max_size       = var.eks_config.max_size
       desired_size   = var.eks_config.desired_size

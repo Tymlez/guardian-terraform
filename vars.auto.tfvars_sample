@@ -18,16 +18,41 @@ aws_zone = "ap-southeast-2a"
 aws_user_eks = "arn:aws:iam::123456789:user/AWSReservedSSO_AdministratorAccess_b036e5/user.name@tymlez.com"
 aws_role_eks = "arn:aws:iam::123456789:role/AWSReservedSSO_AdministratorAccess_b036e5"
 
-#this should ideally match the desired_size of the EKS cluster size below to avoid SPOT instances
-#being reclaimed and assigning to different volume groups that break volume affinity
-aws_vpc_azs = ["ap-southeast-2a", "ap-southeast-2b","ap-southeast-2c"]
+#VPC Setup - required for EKS
+aws_vpc_config = {
+  az1 = {
+    az_name        = "ap-southeast-2a"
+    private_subnet = "10.0.1.0/24"
+    public_subnet  = "10.0.101.0/24"
+  }
+  az2 = {
+    az_name        = "ap-southeast-2b"
+    private_subnet = "10.0.2.0/24"
+    public_subnet  = "10.0.102.0/24"
+  }
+  az3 = {
+    az_name        = "ap-southeast-2c"
+    private_subnet = "10.0.3.0/24"
+    public_subnet  = "10.0.103.0/24"
+  }
+}
 
 #EKS Cluster Size
+#Values are per node group
 eks_config = {
-  instance_types = ["t4a.xlarge"]
+  az1 = {
+    instance_types = ["t3a.medium"]
+    min_size       = 1
+    max_size       = 1
+    desired_size   = 1
+#  ami_type       = "AL2_ARM_64"
+  capacity_type  = "ON_DEMAND" #this is to ensure that the nodegroup doesnt get reclaimed as SPOT leaving MongoDB broken
+  }
+  instance_types = ["t3a.large"]
   min_size       = 1
-  max_size       = 3
-  desired_size   = 3
+  max_size       = 1
+  desired_size   = 1
+#  ami_type       = "AL2_ARM_64"
   capacity_type  = "SPOT"
 }
 
@@ -73,11 +98,11 @@ docker_repository = "gcr.io/hedera-registry"
 #Guardian Requirements
 guardian_operator_id         = "0.0.12345678"
 guardian_operator_key        = "<operator key>"
-guardian_ipfs_key            = "<nft / ipfs service key here>"
+guardian_ipfs_key            = "<nft / ipfs service key here>" #please note for >=2.4.0 this should be web3.storage
 guardian_topic_id            = "0.0.12345678"
 guardian_access_token_secret = "supersecretsauce"
 guardian_static_ip           = ""
-guardian_version             = "2.3.1" #or "latest"
+guardian_version             = "2.4.1" #must be > 2.4.1 as new services were added
 guardian_network             = "testnet"
 guardian_max_transaction_fee = "10"
 guardian_initial_balance     = "30"
@@ -85,20 +110,22 @@ guardian_initial_standard_registry_balance = "100"
 guardian_logger_level        = 2
 guardian_mongodb_persistent_size = "50Gi"
 
-## uncomment this if you want to add some extra charts to the stack
-#custom_helm_repository = "https://charts.bitnami.com/bitnami"
-#custom_helm_charts     = ["nginx"]
-#custom_helm_version    = "13.1.8"
-#custom_helm_values_yaml = {
-#  "nginx" = {
-#    image = {
-#      tag = "latest"
-#    }
-#  }
-#}
-#custom_helm_repository_username = ""
-#custom_helm_repository_password = ""
+#custom Helm repositories will be activated if the custom_helm_charts variable is populated
+custom_helm_repository = ""
+custom_helm_charts = []
+custom_helm_version = ""
+#this is an example of how to provide custom YAML for the charts you provide above
+#this would work for a chart named `nginx` and would provide image.tag = latest
+custom_helm_values_yaml = {
+  "nginx" = {
+    image = {
+      tag = "latest"
+    }
+  }
+}
 
+custom_helm_repository_username = ""
+custom_helm_repository_password = ""
 # if you want expose your service via ingress, this only works when use_ingress is true
 #custom_helm_ingresses = {
 #  enable       = true
@@ -154,6 +181,12 @@ resource_configs = {
     nats ={
       cpu    = "500m",
       memory = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_worker_service = {
+      cpu       = "300m",
+      memory    = "256Mi",
       replicas  = 1,
       autoscale = false
     }

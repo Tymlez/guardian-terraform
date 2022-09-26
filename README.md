@@ -31,7 +31,7 @@ or do `gcloud services enable cloudresourcemanager.googleapis.com`
 
  
 ## Setup for deployment to AWS (EKS)
-On AWS we deploy to EKS using a managed node group of 2 t3a.xlarge SPOT instances by default (we recommend a larger setup for Production to handle SPOT reclamation)
+On AWS we deploy to EKS using a managed node group of 1 x t3a.medium ON_DEMAND instance and 2 t3a.large SPOT instances by default (we recommend a larger setup for Production to handle SPOT reclamation)
 Fargate is not able to be used right now due to issues with EBS, Zones and Terraform.
 
 Steps:
@@ -63,6 +63,7 @@ Terraform coming soon.
    2. `terraform init`
    3. `terraform plan -out=services.plan -var-file=../vars.auto.tfvars`
    4. `terraform apply services.plan`
+   5. Sometimes re-run steps 3 & 4 if timeouts occur as liveness probes sometimes delay.
 6. Confirm Cluster setup with `kubectl get pods -o wide` 
    1. On GCP: (https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl)
    2. On AWS: (https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)

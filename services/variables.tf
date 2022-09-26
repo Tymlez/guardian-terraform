@@ -104,49 +104,49 @@ variable "ingress_whitelisted_ips" {
 variable "firewall_default" {}
 variable "resource_configs" {
   default = {
-  # Custom container size
+    # Custom container size
     guardian_logger_service = {
-        cpu    = "250m",
-        memory = "256Mi",
-        replicas  = 1,
-        autoscale = false
-      }
+      cpu       = "250m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
     guardian_auth_service = {
-        cpu    = "250m",
-        memory = "256Mi",
-        replicas  = 1,
-        autoscale = false
-      }
-      guardian_ipfs_client = {
-        cpu    = "250m",
-        memory = "256Mi",
-        replicas  = 1,
-        autoscale = false
-      }
-      guardian_api_gateway = {
-        cpu    = "500m",
-        memory = "256Mi",
-        replicas  = 1,
-        autoscale = false
-      }
-      guardian_guardian_service ={
-        cpu    = "500m",
-        memory = "256Mi",
-        replicas  = 2,
-        autoscale = false
-      }
-      guardian_frontend = {
-        cpu       = "100m",
-        memory    = "128Mi",
-        replicas  = 1,
-        autoscale = false
-      }
-      nats ={
-        cpu    = "500m",
-        memory = "256Mi",
-        replicas  = 1,
-        autoscale = false
-      }
+      cpu       = "250m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_ipfs_client = {
+      cpu       = "250m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_api_gateway = {
+      cpu       = "500m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    guardian_guardian_service = {
+      cpu       = "500m",
+      memory    = "256Mi",
+      replicas  = 2,
+      autoscale = false
+    }
+    guardian_frontend = {
+      cpu       = "100m",
+      memory    = "128Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+    nats = {
+      cpu       = "500m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
   }
 }
 

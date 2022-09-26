@@ -14,6 +14,7 @@ module "vpc" {
   cluster_name     = var.cluster_name
   firewall_default = var.firewall_default
   whitelisted_ips  = var.whitelisted_ips
+  aws_vpc_config   = var.aws_vpc_config
 }
 
 #this is currently not in use (security groups are used instead)

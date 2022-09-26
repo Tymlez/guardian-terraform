@@ -1,18 +1,18 @@
-# Default values for guardian-logger-service.
+# Default values for guardian-worker-service.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 service:
   type: ClusterIP
   ports:
-    - port: 3001
-      targetPort: p3001
+    - port: 3006
+      targetPort: p3006
       protocol: TCP
-      name: p3001
+      name: p3006
 
 replicaCount: 1
 
 image:
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
@@ -36,8 +36,8 @@ securityContext: {}
 
 
 resources: 
-  cpu: 300mi
-  memory: 256Mi
+  cpu: 500m
+  memory: 512Mi
 
 autoscaling:
   enabled: false
@@ -45,7 +45,6 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-
 
 nodeSelector: {}
 

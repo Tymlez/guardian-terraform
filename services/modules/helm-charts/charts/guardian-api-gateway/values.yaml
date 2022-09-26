@@ -62,14 +62,14 @@ affinity: {}
 livenessProbe:
   initialDelaySeconds: 30
   failureThreshold: 10
-  timeoutSeconds: 5
+  timeoutSeconds: 10
   httpGet:
     path: /demo/registeredUsers
     port: p3002
 readinessProbe:
   initialDelaySeconds: 30
   failureThreshold: 10
-  timeoutSeconds: 5
+  timeoutSeconds: 10
   exec:
     command: 
       -  node 

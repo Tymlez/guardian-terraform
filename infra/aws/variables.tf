@@ -17,9 +17,8 @@ variable "aws_zone" {
   default = "ap-southeast-2a"
 }
 
-variable "aws_vpc_azs" {
-  type    = list(any)
-  default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
+variable "aws_vpc_config" {
+  type = any
 }
 
 variable "vpc_name" {}
