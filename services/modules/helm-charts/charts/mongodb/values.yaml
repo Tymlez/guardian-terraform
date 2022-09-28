@@ -1,7 +1,8 @@
 image:
   tag: 5.0.9-debian-10-r19
 persistence:
-  size: 50Gi
+  size: 100Gi
+  # existingClaim: 'guardian'
 useStatefulSet: true
 auth:
   enabled: false
