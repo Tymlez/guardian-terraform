@@ -38,7 +38,7 @@ const zlib = require('zlib');
         }
     }
 
-    fn(nats.subscribe('response-message', { queue: process.env.SERVICE_CHANNEL })).then();
+    fn(nats.subscribe('response-message', { queue: `${process.env.SERVICE_CHANNEL}-healthcheck` })).then();
 
 
     await nats.request(serviceName + '.GET_STATUS', sc.encode("{}"), { timeout: 30000, headers: head });

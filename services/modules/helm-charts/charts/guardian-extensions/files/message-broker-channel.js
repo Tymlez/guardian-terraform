@@ -132,7 +132,7 @@ class MessageBrokerChannel {
      * @returns MessageResponse or Error response
      */
     request(eventType, payload, timeout) {
-      __awaiter(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const result = yield newrelic_1.default.startBackgroundTransaction(eventType, 'Nats request', () => __awaiter(this, void 0, void 0, function* () {
           const transaction = newrelic_1.default.getTransaction();
 
@@ -186,9 +186,10 @@ class MessageBrokerChannel {
               });
           }
           finally {
-            transaction.end()
+            transaction.end();
           }
-        }))
+        }));
+        return result;
      })
   }
     /**
