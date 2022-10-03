@@ -8,3 +8,10 @@ auth:
   enabled: false
 metadata:
   name: mongo-db-pvc
+resources: 
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 1
+    memory: 2Gi

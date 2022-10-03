@@ -59,13 +59,24 @@ tolerations: []
 
 affinity: {}
 
+# livenessProbe:
+#   initialDelaySeconds: 30
+#   failureThreshold: 10
+#   timeoutSeconds: 10
+#   httpGet:
+#     path: /demo/registeredUsers
+#     port: p3002
+
 livenessProbe:
   initialDelaySeconds: 30
   failureThreshold: 10
   timeoutSeconds: 10
-  httpGet:
-    path: /demo/registeredUsers
-    port: p3002
+  exec:
+    command: 
+      - /bin/bash
+      - -c
+      - ps aux | grep index.js
+      
 readinessProbe:
   initialDelaySeconds: 30
   failureThreshold: 10
