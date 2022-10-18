@@ -3,6 +3,17 @@ locals {
   enable_apm_name         = var.enabled_newrelic ? "newrelic" : ""
 }
 
+resource "helm_release" "vault" {
+  count        = var.vault_config.self_host ? 1 : 0
+  name         = "vault"
+  chart        = "vault"
+  repository   = "https://helm.releases.hashicorp.com"
+  reuse_values = true
+  values = [
+
+  ]
+}
+
 resource "helm_release" "mongodb" {
   name         = "mongodb"
   chart        = "mongodb"
@@ -191,6 +202,25 @@ resource "helm_release" "guardian-auth-service" {
     value = var.guardian_access_token_secret
   }
 
+  set_sensitive {
+    name  = "global.vault.vault_token"
+    value = var.vault_token
+  }
+
+  set {
+    name  = "global.vault.vault_provider"
+    value = var.vault_config.vault_provider
+  }
+
+  set {
+    name  = "global.vault.vault_url"
+    value = var.vault_config.vault_url
+  }
+
+  set {
+    name  = "global.vault.vault_workspace"
+    value = var.vault_config.vault_workspace
+  }
   set {
     name  = "global.guardian.enable_apm_name"
     value = local.enable_apm_name
@@ -215,7 +245,7 @@ resource "helm_release" "guardian-auth-service" {
   }
 
   set {
-    name  = "chart-sha1"
+    name  = "chart-sha12"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-auth-service/**") : filesha1(f)]))
   }
   depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
@@ -270,7 +300,7 @@ resource "helm_release" "guardian-api-gateway" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-api-gateway/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
 }
 
 resource "helm_release" "guardian-guardian-service" {
@@ -361,7 +391,7 @@ resource "helm_release" "guardian-guardian-service" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-guardian-service/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
 
 }
 
@@ -475,7 +505,7 @@ resource "helm_release" "guardian-ipfs-client" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-ipfs-client/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-logger-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
 }
 
 resource "helm_release" "guardian-worker-service" {
@@ -524,14 +554,6 @@ resource "helm_release" "guardian-worker-service" {
 
   depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 }
-
-#resource "helm_release" "vault" {
-#  name       = "vault"
-#  chart      = "vault"
-#  repository = "https://helm.releases.hashicorp.com"
-#
-#  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
-#}
 
 resource "helm_release" "ingress-nginx" {
   count      = var.use_ingress ? 1 : 0
@@ -614,7 +636,6 @@ resource "helm_release" "guardian-extensions" {
   depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
 
 }
-
 
 resource "helm_release" "extensions" {
   for_each = {
