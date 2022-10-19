@@ -9,3 +9,7 @@ data:
   SERVICE_CHANNEL: auth-service
   ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
   NEW_RELIC_APP_NAME: "{{ include "guardian-auth-service.fullname" . }}"
+  VAULT_PROVIDER:  "{{ .Values.global.vault.vault_provider}}"
+  HASHICORP_ADDRESS: "{{ .Values.global.vault.vault_url}}"
+  HASHICORP_WORKSPACE: "{{ .Values.global.vault.vault_workspace}}"
+  IMPORT_KEYS_FROM_DB: "1"

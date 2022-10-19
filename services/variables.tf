@@ -167,3 +167,24 @@ variable "custom_helm_ingresses" {
 # APM
 variable "enabled_newrelic" {}
 variable "newrelic_license_key" {}
+variable "vault_config" {
+  type = object({
+    self_host       = bool
+    vault_provider  = string,
+    vault_url       = string,
+    vault_workspace = string
+    }
+  )
+  default = {
+    self_host       = true
+    vault_provider  = "hashicorp"
+    vault_url       = "http://vault:8200"
+    vault_workspace = "guardian"
+  }
+}
+
+
+variable "vault_token" {
+  type    = string
+  default = "na"
+}

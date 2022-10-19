@@ -72,7 +72,11 @@ spec:
               readOnly: true
               mountPath: /usr/auth-service/entrypoint.sh
               subPath: entrypoint.sh
-            
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/auth-service/dist/vaults/vault-providers/hashicorp.js
+              subPath:  hashicorp.js
+
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
@@ -91,6 +95,8 @@ spec:
                 path: message-broker-channel.js     
               - key: guardian-healthcheck.js
                 path: guardian-healthcheck.js
+              - key: hashicorp.js
+                path: hashicorp.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

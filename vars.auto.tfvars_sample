@@ -193,5 +193,11 @@ resource_configs = {
 }
 
 
-
-
+vault_config = {
+  self_host       = true
+  vault_provider  = "hashicorp"
+  vault_url       = "http://vault:8200"
+  vault_workspace = "guardian"
+}
+# you need to initialise vault server to get token  & key for 1st time
+vault_token = "hvs.**********"

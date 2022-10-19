@@ -86,3 +86,23 @@ variable "tld" {}
 variable "use_ingress" {
   default = true
 }
+
+variable "vault_config" {
+  type = object({
+    self_host       = bool
+    vault_provider  = string,
+    vault_url       = string,
+    vault_workspace = string
+    }
+  )
+  default = {
+    self_host       = true
+    vault_provider  = "hashicorp"
+    vault_url       = "http://vault:8200"
+    vault_workspace = "guardian"
+  }
+}
+
+variable "vault_token" {
+  default = "na"
+}
