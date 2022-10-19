@@ -117,3 +117,10 @@ variable "resource_configs" {
 }
 
 variable "aws_zone" {}
+
+variable "vault_config" {
+
+}
+variable "vault_token" {
+
+}

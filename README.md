@@ -81,6 +81,8 @@ When destroyed I recommend removing all plan and state files on your local machi
 
 ## Things to note & Caveats
 
+Self Hosted vault need to be manually configured at the first time then create the token use to configure  auth-service. (vault_config.vault_token).
+
 GCP is the preferred deployment platform for this repo, GKE Autopilot just works,
 and it is very low drama with excellent debugging and connectivity tools on GCP.
 
