@@ -457,8 +457,8 @@ resource "helm_release" "guardian-ipfs-client" {
   name  = "guardian-ipfs-client"
   chart = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
   #  repository = "${var.docker_repository}/ipfs-client"
-
-  timeout = "360"
+  force_update = true
+  timeout      = "360"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-ipfs-client/values.yaml")}"
