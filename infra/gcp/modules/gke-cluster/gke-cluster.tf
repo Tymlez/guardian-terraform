@@ -28,7 +28,7 @@ resource "google_container_cluster" "cluster" {
       start_time = "13:00"
     }
   }
-  min_master_version = "1.24.4-gke.800"
+  min_master_version = "1.24.5-gke.600"
 }
 
 #this is pretty buggy, for now ill leave disabled until there is create backup plan functionality in terraform
