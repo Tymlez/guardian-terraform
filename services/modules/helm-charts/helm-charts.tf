@@ -178,9 +178,10 @@ resource "helm_release" "guardian-logger-service" {
 }
 
 resource "helm_release" "guardian-auth-service" {
-  name       = "guardian-auth-service"
-  chart      = "${path.root}/modules/helm-charts/charts/guardian-auth-service"
-  repository = "${var.docker_repository}/auth-service"
+  name         = "guardian-auth-service"
+  chart        = "${path.root}/modules/helm-charts/charts/guardian-auth-service"
+  repository   = "${var.docker_repository}/auth-service"
+  force_update = true
 
   timeout = "180"
 
@@ -457,8 +458,7 @@ resource "helm_release" "guardian-ipfs-client" {
   name  = "guardian-ipfs-client"
   chart = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
   #  repository = "${var.docker_repository}/ipfs-client"
-  force_update = true
-  timeout      = "360"
+  timeout = "360"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-ipfs-client/values.yaml")}"
