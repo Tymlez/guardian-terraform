@@ -188,3 +188,8 @@ variable "vault_token" {
   type    = string
   default = "na"
 }
+
+variable "vault_keys" {
+  type = string
+  default = ""
+}

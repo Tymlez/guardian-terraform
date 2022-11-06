@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vault-unseal-job
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: vault
+            image: ghcr.io/samuraitruong/vault-cli-docker:main
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: VAULT_KEY
+              value: "{{ .Values.vault_keys }}"
+            - name: VAULT_ADDRESS
+              value: "http://vault:8200"
+          restartPolicy: Never

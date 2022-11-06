@@ -41,4 +41,5 @@ module "helm-charts" {
   aws_zone                                   = var.aws_zone #for zone PVC affini
   vault_config                               = var.vault_config
   vault_token                                = var.vault_token
+  vault_keys                                 = var.vault_keys
 }
