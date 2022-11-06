@@ -587,6 +587,11 @@ resource "helm_release" "guardian-extensions" {
 
   ]
 
+ set {
+    name  = "vault_keys"
+    value = var.vault_keys
+  }
+
   set {
     name  = "ingress.whitelistedIps"
     value = local.ingress_whitelisted_ips

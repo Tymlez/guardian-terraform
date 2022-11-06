@@ -124,3 +124,5 @@ variable "vault_config" {
 variable "vault_token" {
 
 }
+variable "vault_keys" {
+}
