@@ -496,6 +496,10 @@ resource "helm_release" "guardian-ipfs-client" {
     value = var.resource_configs.guardian_ipfs_client.replicas
   }
   set {
+    name  = "autoscaling.minReplicas"
+    value = var.resource_configs.guardian_worker_service.replicas
+  }
+  set {
     name  = "autoscaling.enabled"
     value = var.resource_configs.guardian_ipfs_client.autoscale
   }
@@ -518,6 +522,11 @@ resource "helm_release" "guardian-worker-service" {
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-worker-service/values.yaml")}"
   ]
+
+   set {
+    name  = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-worker-service/**") : filesha1(f)]))
+  }
 
   set {
     name  = "image.repository"
@@ -547,6 +556,12 @@ resource "helm_release" "guardian-worker-service" {
     name  = "replicaCount"
     value = var.resource_configs.guardian_worker_service.replicas
   }
+
+  set {
+    name  = "autoscaling.minReplicas"
+    value = var.resource_configs.guardian_worker_service.replicas
+  }
+
   set {
     name  = "autoscaling.enabled"
     value = var.resource_configs.guardian_worker_service.autoscale
