@@ -675,7 +675,7 @@ resource "helm_release" "extensions" {
   ]
   set {
     name  = "chart-sha1"
-    value = sha1(var.custom_helm_values_yaml[each.value])
+    value = sha1(tostring(var.custom_helm_values_yaml[each.value]))
   }
 
   depends_on = [helm_release.guardian-message-broker]
