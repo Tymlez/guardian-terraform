@@ -523,7 +523,7 @@ resource "helm_release" "guardian-worker-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-worker-service/values.yaml")}"
   ]
 
-   set {
+  set {
     name  = "chart-sha1"
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-worker-service/**") : filesha1(f)]))
   }
@@ -602,7 +602,7 @@ resource "helm_release" "guardian-extensions" {
 
   ]
 
- set {
+  set {
     name  = "vault_keys"
     value = var.vault_keys
   }
@@ -673,6 +673,10 @@ resource "helm_release" "extensions" {
   values = [
     try(yamlencode(var.custom_helm_values_yaml[each.value]), "{}")
   ]
+  set {
+    name  = "chart-sha1"
+    value = sha1(var.custom_helm_values_yaml[each.value])
+  }
 
   depends_on = [helm_release.guardian-message-broker]
 }
