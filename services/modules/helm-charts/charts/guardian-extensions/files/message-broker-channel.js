@@ -80,9 +80,9 @@ const message_response_1 = require("../models/message-response");
 const interfaces_1 = require("@guardian/interfaces");
 const MQ_TIMEOUT = 300000;
 /**
- * Message Chunk Size ~ 1 MB
+ * Message Chunk Size ~ 10 MB
  */
-const MQ_MESSAGE_CHUNK = 1000000;
+const MQ_MESSAGE_CHUNK = 10000000;
 const reqMap = new Map();
 const chunkMap = new Map();
 /**
