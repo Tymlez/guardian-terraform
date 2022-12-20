@@ -48,6 +48,9 @@ spec:
               cpu: "{{ .Values.resources.cpu}}"
               memory: "{{ .Values.resources.memory}}"
           envFrom:
+            - secretRef:
+                name: {{ include "guardian-worker-service.fullname" . }}-{{ .Release.Revision }}
+
             - configMapRef:
                 name: {{ include "guardian-worker-service.fullname" . }}-{{ .Release.Revision }}
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
