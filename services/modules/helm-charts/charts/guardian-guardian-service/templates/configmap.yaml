@@ -17,3 +17,5 @@ data:
   ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
   NEW_RELIC_APP_NAME: "{{ include "guardian-guardian-service.fullname" . }}"
   NODE_OPTIONS: "--max-old-space-size=8192"
+  MULTI_POLICY_SCHEDULER: "0 0 * * *"
+  SEND_KEYS_TO_VAULT: "TRUE"
