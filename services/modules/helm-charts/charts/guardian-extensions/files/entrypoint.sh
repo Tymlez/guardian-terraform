@@ -15,9 +15,11 @@ fi
 case "$ENABLE_APM_NAME" in
     "newrelic")
         echo "Installing newrelic dependencies"
-        
+        pwd
         mv package.json package.bak
+        npm init  -y
         npm install --legacy-peer-deps newrelic @newrelic/native-metrics
+        rm package.json
         mv package.bak package.json
         
         node -r newrelic ./dist/index.js
