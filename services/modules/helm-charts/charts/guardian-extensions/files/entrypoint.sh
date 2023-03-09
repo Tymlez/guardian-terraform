@@ -22,7 +22,7 @@ case "$ENABLE_APM_NAME" in
         npm install --legacy-peer-deps newrelic @newrelic/native-metrics
         echo $workdir
         cd $workdir
-        cp -R /tmp/newrelic/node_modules $workdir/node_modules
+        cp -R /tmp/newrelic/node_modules/** $workdir/node_modules/
         node -r newrelic ./dist/index.js
     ;;
     *)
