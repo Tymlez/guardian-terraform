@@ -15,6 +15,7 @@ fi
 case "$ENABLE_APM_NAME" in
     "newrelic")
         echo "Installing newrelic dependencies"
+        workdir=$(pwd)
         mkdir /tmp/newrelic
         cd /tmp/newrelic
         npm init  -y
