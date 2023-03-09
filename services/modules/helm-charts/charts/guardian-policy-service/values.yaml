@@ -1,0 +1,79 @@
+# Default values for guardian-policy-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+service:
+  type: ClusterIP
+  ports:
+    - port: 3005
+      targetPort: p3005
+      protocol: TCP
+      name: p3005
+
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+
+resources:
+  cpu: 1000m
+  memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+livenessProbe:
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  timeoutSeconds: 10
+  exec:
+    command: 
+      - /bin/bash
+      - -c
+      - ps aux | grep index.js
+readinessProbe:
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  timeoutSeconds: 10
+  exec:
+    command: 
+      -  node 
+      -  guardian-healthcheck.js
