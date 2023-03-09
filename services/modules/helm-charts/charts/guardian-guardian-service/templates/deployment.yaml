@@ -57,17 +57,17 @@ spec:
           volumeMounts:
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/guardian-service/guardian-healthcheck.js
+              mountPath: /usr/local/guardian-service/guardian-healthcheck.js
               subPath: guardian-healthcheck.js
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/guardian-service/entrypoint.sh
+              mountPath: /usr/local/guardian-service/entrypoint.sh
               subPath: entrypoint.sh
             
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/guardian-service/node_modules/@guardian/common/dist/mq/message-broker-channel.js
+              mountPath: /usr/local/guardian-service/node_modules/@guardian/common/dist/mq/message-broker-channel.js
               subPath: message-broker-channel.js
             {{- end }}
 

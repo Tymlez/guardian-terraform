@@ -100,6 +100,13 @@ variable "resource_configs" {
       autoscale = false
     }
 
+    guardian_policy_service = {
+      cpu       = "400m",
+      memory    = "512Mi",
+      replicas  = 1,
+      autoscale = false
+    }
+
     nats = {
       cpu       = "500m",
       memory    = "256Mi",
