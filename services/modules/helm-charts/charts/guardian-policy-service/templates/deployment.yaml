@@ -1,18 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "guardian-api-gateway.fullname" . }}
+  name: {{ include "guardian-policy-service.fullname" . }}
   labels:
-    {{- include "guardian-api-gateway.labels" . | nindent 4 }}
+    {{- include "guardian-policy-service.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "guardian-api-gateway.selectorLabels" . | nindent 6 }}
-  strategy: 
-    type: Recreate
+      {{- include "guardian-policy-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "guardian-api-gateway.selectorLabels" . | nindent 8 }}
+        {{- include "guardian-policy-service.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -34,10 +32,6 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: 'p3002'
-              containerPort: 3002
-              protocol: TCP
           command: ["/bin/sh"]
           args: ["entrypoint.sh"]
           livenessProbe:
@@ -51,28 +45,29 @@ spec:
             requests:
               cpu: "{{ .Values.resources.cpu}}"
               memory: "{{ .Values.resources.memory}}"
-
           envFrom:
+            - configMapRef:
+                name: {{ include "guardian-policy-service.fullname" . }}-{{ .Release.Revision }}
+            - secretRef:
+                name: {{ include "guardian-policy-service.fullname" . }}-{{ .Release.Revision }}
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - configMapRef:
                 name: guardian-extensions-newrelic
             {{- end}}
-            - configMapRef:
-                name: {{ include "guardian-api-gateway.fullname" . }}-{{ .Release.Revision }}         
           volumeMounts:
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/local/api-gateway/guardian-healthcheck.js
+              mountPath: /usr/local/policy-service/guardian-healthcheck.js
               subPath: guardian-healthcheck.js
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/local/api-gateway/entrypoint.sh
+              mountPath: /usr/local/policy-service/entrypoint.sh
               subPath: entrypoint.sh
             
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/local/api-gateway/node_modules/@guardian/common/dist/mq/message-broker-channel.js
+              mountPath: /usr/local/policy-service/node_modules/@guardian/common/dist/mq/message-broker-channel.js
               subPath: message-broker-channel.js
             {{- end }}
 
@@ -99,4 +94,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-

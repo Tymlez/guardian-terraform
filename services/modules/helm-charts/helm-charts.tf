@@ -395,6 +395,68 @@ resource "helm_release" "guardian-guardian-service" {
 
 }
 
+resource "helm_release" "guardian-policy-service" {
+  name       = "guardian-guardian-service"
+  chart      = "${path.root}/modules/helm-charts/charts/guardian-policy-service"
+  repository = "${var.docker_repository}/policy-service"
+
+  timeout = "360"
+
+  values = [
+    "${file("${path.root}/modules/helm-charts/charts/guardian-policy-service/values.yaml")}"
+  ]
+
+  set {
+    name  = "image.repository"
+    value = "${var.docker_repository}/policy-service"
+  }
+
+  set {
+    name  = "image.tag"
+    value = var.guardian_version
+  }
+
+  set {
+    name  = "global.guardian.network"
+    value = coalesce(var.guardian_network, "testnet")
+  }
+
+  set {
+    name  = "global.guardian.logLevel"
+    value = coalesce(var.guardian_logger_level, "2")
+  }
+
+  set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
+
+  set {
+    name  = "resources.cpu"
+    value = var.resource_configs.guardian_policy_service.cpu
+  }
+  set {
+    name  = "resources.memory"
+    value = var.resource_configs.guardian_policy_service.memory
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_policy_service.replicas
+  }
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_policy_service.autoscale
+  }
+  set {
+    name  = "chart-sha1"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-policy-service/**") : filesha1(f)]))
+  }
+
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
+
+}
+
 resource "helm_release" "guardian-frontend" {
   name       = "guardian-frontend"
   chart      = "${path.root}/modules/helm-charts/charts/guardian-frontend"

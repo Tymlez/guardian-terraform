@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "guardian-policy-service.fullname" . }}-{{ .Release.Revision }}
+data:
+  MQ_ADDRESS: message-broker
+  DB_HOST: mongodb
+  DB_DATABASE: guardian_db
+  SERVICE_CHANNEL: "policy-service"
+  HEDERA_NET: "{{ .Values.global.guardian.network}}"
+  LOG_LEVEL: "{{ .Values.global.guardian.logLevel}}"
+  ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
+  NEW_RELIC_APP_NAME: "{{ include "guardian-policy-service.fullname" . }}"
+  NODE_OPTIONS: "--max-old-space-size=8192"
+  BBS_SIGNATURES_MODE: WASM
