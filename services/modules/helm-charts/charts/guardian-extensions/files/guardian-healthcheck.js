@@ -1,7 +1,7 @@
 const NATS = require("nats");
 const zlib = require("zlib");
 
-// node /usr/common/guardian-healthcheck.js
+// node /usr/local/common/guardian-healthcheck.js
 (async () => {
   const serviceName =
     process.env.HEALTHCHECK_CHANNEL_NAME || process.env.SERVICE_CHANNEL;

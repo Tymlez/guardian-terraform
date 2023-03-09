@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "guardian-policy-service.fullname" . }}-{{ .Release.Revision }}
+  labels:
+    {{- include "guardian-policy-service.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- toYaml .Values.service.ports | nindent 4 }}
+  selector:
+    {{- include "guardian-policy-service.selectorLabels" . | nindent 4 }}

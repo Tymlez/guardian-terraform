@@ -4,22 +4,28 @@ ts=$(date +%s.%N)
 
 if [ "$SERVICE_CHANNEL" = "worker" ];
 then
-  export SERVICE_CHANNEL="worker.$ts"
+    export SERVICE_CHANNEL="worker.$ts"
 fi
 
 if [ "$SERVICE_CHANNEL" = "ipfs-client" ];
 then
-  export SERVICE_CHANNEL="ipfs-client.$ts"
+    export SERVICE_CHANNEL="ipfs-client.$ts"
 fi
 
 case "$ENABLE_APM_NAME" in
     "newrelic")
         echo "Installing newrelic dependencies"
-
-        npm install --save-dev --legacy-peer-deps newrelic @newrelic/native-metrics
+        workdir=$(pwd)
+        mkdir /tmp/newrelic || true
+        cd /tmp/newrelic
+        npm init  -y
+        npm install --legacy-peer-deps newrelic @newrelic/native-metrics
+        echo $workdir
+        cd $workdir
+        cp -R /tmp/newrelic/node_modules/** $workdir/node_modules/
         node -r newrelic ./dist/index.js
     ;;
     *)
-      node ./dist/index.js
+        node ./dist/index.js
     ;;
 esac
