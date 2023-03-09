@@ -396,7 +396,7 @@ resource "helm_release" "guardian-guardian-service" {
 }
 
 resource "helm_release" "guardian-policy-service" {
-  name       = "guardian-guardian-service"
+  name       = "guardian-policy-service"
   chart      = "${path.root}/modules/helm-charts/charts/guardian-policy-service"
   repository = "${var.docker_repository}/policy-service"
 

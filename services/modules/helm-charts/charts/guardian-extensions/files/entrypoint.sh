@@ -16,7 +16,7 @@ case "$ENABLE_APM_NAME" in
     "newrelic")
         echo "Installing newrelic dependencies"
         workdir=$(pwd)
-        mkdir /tmp/newrelic
+        mkdir /tmp/newrelic || true
         cd /tmp/newrelic
         npm init  -y
         npm install --legacy-peer-deps newrelic @newrelic/native-metrics
