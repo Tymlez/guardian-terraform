@@ -307,8 +307,7 @@ resource "helm_release" "guardian-guardian-service" {
   name       = "guardian-guardian-service"
   chart      = "${path.root}/modules/helm-charts/charts/guardian-guardian-service"
   repository = "${var.docker_repository}/guardian-service"
-
-  timeout = "360"
+  timeout    = "360"
 
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-guardian-service/values.yaml")}"
@@ -391,7 +390,7 @@ resource "helm_release" "guardian-guardian-service" {
     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-guardian-service/**") : filesha1(f)]))
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service, helm_release.guardian-policy-service]
 
 }
 

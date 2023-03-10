@@ -80,9 +80,11 @@ const message_response_1 = require("../models/message-response");
 const interfaces_1 = require("@guardian/interfaces");
 const MQ_TIMEOUT = 300000;
 /**
- * Message Chunk Size ~ 10 MB
+ * Message Chunk Size
+ * Default value ~ 1 MB
  */
-const MQ_MESSAGE_CHUNK = 10000000;
+const MQ_MESSAGE_CHUNK =
+  Math.floor(Math.abs(+process.env.MQ_MESSAGE_CHUNK)) || 10000000;
 const reqMap = new Map();
 const chunkMap = new Map();
 /**
@@ -93,65 +95,70 @@ class MessageBrokerChannel {
     this.channel = channel;
     this.channelName = channelName;
     const fn = (_sub) => {
-      var _sub_1, _sub_1_1;
+      var _a, _sub_1, _sub_1_1;
       return __awaiter(this, void 0, void 0, function* () {
-        var e_1, _a;
+        var _b, e_1, _c, _d;
         try {
           for (
-            _sub_1 = __asyncValues(_sub);
-            (_sub_1_1 = yield _sub_1.next()), !_sub_1_1.done;
+            _a = true, _sub_1 = __asyncValues(_sub);
+            (_sub_1_1 = yield _sub_1.next()), (_b = _sub_1_1.done), !_b;
 
           ) {
-            const m = _sub_1_1.value;
+            _d = _sub_1_1.value;
+            _a = false;
             try {
-              if (!m.headers) {
-                console.error("No headers");
-                continue;
-              }
-              if (!m.headers.has("chunks")) {
-                console.error("No chunks");
-                continue;
-              }
-              const messageId = m.headers.get("messageId");
-              const chunkNumber = m.headers.get("chunk");
-              const countChunks = m.headers.get("chunks");
-              let requestChunks;
-              if (chunkMap.has(messageId)) {
-                requestChunks = chunkMap.get(messageId);
-                requestChunks.push({ data: m.data, index: chunkNumber });
-              } else {
-                requestChunks = [{ data: m.data, index: chunkNumber }];
-                chunkMap.set(messageId, requestChunks);
-              }
-              if (requestChunks.length < countChunks) {
-                continue;
-              } else {
-                chunkMap.delete(messageId);
-              }
-              if (reqMap.has(messageId)) {
-                const requestChunksSorted = new Array(requestChunks.length);
-                for (const requestChunk of requestChunks) {
-                  requestChunksSorted[requestChunk.index - 1] =
-                    requestChunk.data;
+              const m = _d;
+              try {
+                if (!m.headers) {
+                  console.error("No headers");
+                  continue;
                 }
-                const dataObj = JSON.parse(
-                  Buffer.concat(requestChunksSorted).toString()
-                );
-                const func = reqMap.get(messageId);
-                func(dataObj);
-              } else {
-                continue;
+                if (!m.headers.has("chunks")) {
+                  console.error("No chunks");
+                  continue;
+                }
+                const messageId = m.headers.get("messageId");
+                const chunkNumber = m.headers.get("chunk");
+                const countChunks = m.headers.get("chunks");
+                let requestChunks;
+                if (chunkMap.has(messageId)) {
+                  requestChunks = chunkMap.get(messageId);
+                  requestChunks.push({ data: m.data, index: chunkNumber });
+                } else {
+                  requestChunks = [{ data: m.data, index: chunkNumber }];
+                  chunkMap.set(messageId, requestChunks);
+                }
+                if (requestChunks.length < countChunks) {
+                  continue;
+                } else {
+                  chunkMap.delete(messageId);
+                }
+                if (reqMap.has(messageId)) {
+                  const requestChunksSorted = new Array(requestChunks.length);
+                  for (const requestChunk of requestChunks) {
+                    requestChunksSorted[requestChunk.index - 1] =
+                      requestChunk.data;
+                  }
+                  const dataObj = JSON.parse(
+                    Buffer.concat(requestChunksSorted).toString()
+                  );
+                  const func = reqMap.get(messageId);
+                  func(dataObj);
+                } else {
+                  continue;
+                }
+              } catch (e) {
+                console.error(e);
               }
-            } catch (e) {
-              console.error(e);
+            } finally {
+              _a = true;
             }
           }
         } catch (e_1_1) {
           e_1 = { error: e_1_1 };
         } finally {
           try {
-            if (_sub_1_1 && !_sub_1_1.done && (_a = _sub_1.return))
-              yield _a.call(_sub_1);
+            if (!_a && !_b && (_c = _sub_1.return)) yield _c.call(_sub_1);
           } finally {
             if (e_1) throw e_1.error;
           }
@@ -188,110 +195,115 @@ class MessageBrokerChannel {
         queue: process.env.SERVICE_CHANNEL,
       });
       const fn = (_sub) => {
-        var _sub_2, _sub_2_1;
+        var _a, _sub_2, _sub_2_1;
         return __awaiter(this, void 0, void 0, function* () {
-          var e_2, _a;
+          var _b, e_2, _c, _d;
           try {
             for (
-              _sub_2 = __asyncValues(_sub);
-              (_sub_2_1 = yield _sub_2.next()), !_sub_2_1.done;
+              _a = true, _sub_2 = __asyncValues(_sub);
+              (_sub_2_1 = yield _sub_2.next()), (_b = _sub_2_1.done), !_b;
 
             ) {
-              const m = _sub_2_1.value;
-              yield newrelic_1.default.startBackgroundTransaction(
-                target,
-                "Nats response",
-                () =>
-                  __awaiter(this, void 0, void 0, function* () {
-                    const transaction = newrelic_1.default.getTransaction();
-                    try {
-                      let payload;
-                      const messageId = m.headers.get("messageId");
-                      if (m.headers.has("chunks")) {
-                        const chunkNumber = m.headers.get("chunk");
-                        const countChunks = m.headers.get("chunks");
-                        let requestChunks;
-                        if (chunkMap.has(messageId)) {
-                          requestChunks = chunkMap.get(messageId);
-                          requestChunks.push({
-                            data: m.data,
-                            index: chunkNumber,
-                          });
-                        } else {
-                          requestChunks = [
-                            { data: m.data, index: chunkNumber },
-                          ];
-                          chunkMap.set(messageId, requestChunks);
-                        }
-                        if (requestChunks.length < countChunks) {
-                          m.respond(new Uint8Array(0));
-                          return;
-                        } else {
-                          chunkMap.delete(messageId);
-                          m.respond(new Uint8Array(0));
-                        }
-                        const requestChunksSorted = new Array(
-                          requestChunks.length
-                        );
-                        for (const requestChunk of requestChunks) {
-                          requestChunksSorted[requestChunk.index - 1] =
-                            requestChunk.data;
-                        }
-                        payload = JSON.parse(
-                          Buffer.concat(requestChunksSorted).toString()
-                        );
-                      } else {
-                        payload = JSON.parse(m.data.toString());
-                      }
-                      let responseMessage;
+              _d = _sub_2_1.value;
+              _a = false;
+              try {
+                const m = _d;
+                yield newrelic_1.default.startBackgroundTransaction(
+                  target,
+                  "Nats response",
+                  () =>
+                    __awaiter(this, void 0, void 0, function* () {
+                      const transaction = newrelic_1.default.getTransaction();
                       try {
-                        responseMessage = yield handleFunc(payload);
-                      } catch (error) {
-                        responseMessage = new message_response_1.MessageError(
-                          error,
-                          error.code
+                        let payload;
+                        const messageId = m.headers.get("messageId");
+                        if (m.headers.has("chunks")) {
+                          const chunkNumber = m.headers.get("chunk");
+                          const countChunks = m.headers.get("chunks");
+                          let requestChunks;
+                          if (chunkMap.has(messageId)) {
+                            requestChunks = chunkMap.get(messageId);
+                            requestChunks.push({
+                              data: m.data,
+                              index: chunkNumber,
+                            });
+                          } else {
+                            requestChunks = [
+                              { data: m.data, index: chunkNumber },
+                            ];
+                            chunkMap.set(messageId, requestChunks);
+                          }
+                          if (requestChunks.length < countChunks) {
+                            m.respond(new Uint8Array(0));
+                            return;
+                          } else {
+                            chunkMap.delete(messageId);
+                            m.respond(new Uint8Array(0));
+                          }
+                          const requestChunksSorted = new Array(
+                            requestChunks.length
+                          );
+                          for (const requestChunk of requestChunks) {
+                            requestChunksSorted[requestChunk.index - 1] =
+                              requestChunk.data;
+                          }
+                          payload = JSON.parse(
+                            Buffer.concat(requestChunksSorted).toString()
+                          );
+                        } else {
+                          payload = JSON.parse(m.data.toString());
+                        }
+                        let responseMessage;
+                        try {
+                          responseMessage = yield handleFunc(payload);
+                        } catch (error) {
+                          responseMessage = new message_response_1.MessageError(
+                            error,
+                            error.code
+                          );
+                        }
+                        const head = (0, nats_1.headers)();
+                        head.append("messageId", messageId);
+                        const payloadBuffer = Buffer.from(
+                          JSON.stringify(responseMessage)
                         );
+                        let offset = 0;
+                        const chunks = [];
+                        while (offset < payloadBuffer.length) {
+                          chunks.push(
+                            payloadBuffer.subarray(
+                              offset,
+                              offset + MQ_MESSAGE_CHUNK > payloadBuffer.length
+                                ? payloadBuffer.length
+                                : offset + MQ_MESSAGE_CHUNK
+                            )
+                          );
+                          offset = offset + MQ_MESSAGE_CHUNK;
+                        }
+                        head.set("chunks", chunks.length.toString());
+                        for (let i = 0; i < chunks.length; i++) {
+                          const chunk = chunks[i];
+                          head.set("chunk", (i + 1).toString());
+                          this.channel.publish("response-message", chunk, {
+                            headers: head,
+                          });
+                        }
+                      } catch (e) {
+                        console.error(e.message);
+                      } finally {
+                        transaction.end();
                       }
-                      const head = (0, nats_1.headers)();
-                      head.append("messageId", messageId);
-                      const payloadBuffer = Buffer.from(
-                        JSON.stringify(responseMessage)
-                      );
-                      let offset = 0;
-                      const chunks = [];
-                      while (offset < payloadBuffer.length) {
-                        chunks.push(
-                          payloadBuffer.subarray(
-                            offset,
-                            offset + MQ_MESSAGE_CHUNK > payloadBuffer.length
-                              ? payloadBuffer.length
-                              : offset + MQ_MESSAGE_CHUNK
-                          )
-                        );
-                        offset = offset + MQ_MESSAGE_CHUNK;
-                      }
-                      head.set("chunks", chunks.length.toString());
-                      for (let i = 0; i < chunks.length; i++) {
-                        const chunk = chunks[i];
-                        head.set("chunk", (i + 1).toString());
-                        this.channel.publish("response-message", chunk, {
-                          headers: head,
-                        });
-                      }
-                    } catch (e) {
-                      console.error(e.message);
-                    } finally {
-                      transaction.end();
-                    }
-                  })
-              );
+                    })
+                );
+              } finally {
+                _a = true;
+              }
             }
           } catch (e_2_1) {
             e_2 = { error: e_2_1 };
           } finally {
             try {
-              if (_sub_2_1 && !_sub_2_1.done && (_a = _sub_2.return))
-                yield _a.call(_sub_2);
+              if (!_a && !_b && (_c = _sub_2.return)) yield _c.call(_sub_2);
             } finally {
               if (e_2) throw e_2.error;
             }
@@ -436,31 +448,36 @@ class MessageBrokerChannel {
       queue: process.env.SERVICE_CHANNEL,
     });
     const fn = (_sub) => {
-      var _sub_3, _sub_3_1;
+      var _a, _sub_3, _sub_3_1;
       return __awaiter(this, void 0, void 0, function* () {
-        var e_3, _a;
+        var _b, e_3, _c, _d;
         try {
           for (
-            _sub_3 = __asyncValues(_sub);
-            (_sub_3_1 = yield _sub_3.next()), !_sub_3_1.done;
+            _a = true, _sub_3 = __asyncValues(_sub);
+            (_sub_3_1 = yield _sub_3.next()), (_b = _sub_3_1.done), !_b;
 
           ) {
-            const m = _sub_3_1.value;
+            _d = _sub_3_1.value;
+            _a = false;
             try {
-              const dataObj = JSON.parse(
-                (0, nats_1.StringCodec)().decode(m.data)
-              );
-              callback(dataObj);
-            } catch (e) {
-              console.error(e.message);
+              const m = _d;
+              try {
+                const dataObj = JSON.parse(
+                  (0, nats_1.StringCodec)().decode(m.data)
+                );
+                callback(dataObj);
+              } catch (e) {
+                console.error(e.message);
+              }
+            } finally {
+              _a = true;
             }
           }
         } catch (e_3_1) {
           e_3 = { error: e_3_1 };
         } finally {
           try {
-            if (_sub_3_1 && !_sub_3_1.done && (_a = _sub_3.return))
-              yield _a.call(_sub_3);
+            if (!_a && !_b && (_c = _sub_3.return)) yield _c.call(_sub_3);
           } finally {
             if (e_3) throw e_3.error;
           }
