@@ -110,3 +110,5 @@ fabric.properties
 *.plan
 *.Identifier
 *.lock.hcl
+
+**/ignored/**
