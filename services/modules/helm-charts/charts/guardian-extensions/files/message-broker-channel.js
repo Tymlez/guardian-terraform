@@ -84,7 +84,7 @@ const MQ_TIMEOUT = 300000;
  * Default value ~ 1 MB
  */
 const MQ_MESSAGE_CHUNK =
-  Math.floor(Math.abs(+process.env.MQ_MESSAGE_CHUNK)) || 10000000;
+  Math.floor(Math.abs(+process.env.MQ_MESSAGE_CHUNK)) || 100000000;
 const reqMap = new Map();
 const chunkMap = new Map();
 /**
