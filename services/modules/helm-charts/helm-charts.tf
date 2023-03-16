@@ -631,7 +631,7 @@ resource "helm_release" "guardian-worker-service" {
     value = var.resource_configs.guardian_worker_service.autoscale
   }
 
-  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
 }
 
 resource "helm_release" "ingress-nginx" {
