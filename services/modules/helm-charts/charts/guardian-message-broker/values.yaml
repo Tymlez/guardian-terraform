@@ -460,9 +460,9 @@ bootconfig:
 #
 natsbox:
   enabled: true
-  image: natsio/nats-box:0.11.0
-  pullPolicy: IfNotPresent
-  securityContext: {}
+  #image: natsio/nats-box:0.11.0
+  #pullPolicy: IfNotPresent
+  #securityContext: {}
 
   # Labels to add to the natsbox deployment
   # ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
