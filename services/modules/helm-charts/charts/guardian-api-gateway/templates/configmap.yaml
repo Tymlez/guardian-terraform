@@ -9,3 +9,4 @@ data:
   NEW_RELIC_APP_NAME: "{{ include "guardian-api-gateway.fullname" . }}"
   HEALTHCHECK_CHANNEL_NAME: guardians
   MRV_ADDRESS: message-broker/mrv
+  MQ_MESSAGE_CHUNK: "{{ .Values.global.guardian.mq_message_chunk}}"

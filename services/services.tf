@@ -42,4 +42,5 @@ module "helm-charts" {
   vault_config                               = var.vault_config
   vault_token                                = var.vault_token
   vault_keys                                 = var.vault_keys
+  mq_message_size                            = var.mq_message_size
 }
