@@ -14,3 +14,4 @@ data:
   IPFS_TIMEOUT: "720"
   IPFS_PROVIDER: "web3storage"
   IPFS_PUBLIC_GATEWAY: "https://ipfs.io/ipfs/${cid}"
+  MQ_MESSAGE_CHUNK: "{{ .Values.global.guardian.mq_message_chunk}}"

@@ -138,6 +138,11 @@ resource "helm_release" "guardian-logger-service" {
   ]
 
   set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
+  }
+
+  set {
     name  = "resources.cpu"
     value = var.resource_configs.guardian_logger_service.cpu
   }
@@ -189,6 +194,10 @@ resource "helm_release" "guardian-auth-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-auth-service/values.yaml")}"
   ]
 
+  set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
+  }
   set {
     name  = "image.repository"
     value = "${var.docker_repository}/auth-service"
@@ -264,6 +273,10 @@ resource "helm_release" "guardian-api-gateway" {
   ]
 
   set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
+  }
+  set {
     name  = "image.repository"
     value = "${var.docker_repository}/api-gateway"
   }
@@ -313,6 +326,12 @@ resource "helm_release" "guardian-guardian-service" {
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-guardian-service/values.yaml")}"
   ]
+
+  set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
+  }
+
 
   set {
     name  = "image.repository"
@@ -405,7 +424,10 @@ resource "helm_release" "guardian-policy-service" {
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-policy-service/values.yaml")}"
   ]
-
+  set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
+  }
   set {
     name  = "image.repository"
     value = "${var.docker_repository}/policy-service"
@@ -515,65 +537,6 @@ resource "helm_release" "guardian-frontend" {
   depends_on = [helm_release.guardian-api-gateway, helm_release.extensions]
 }
 
-# resource "helm_release" "guardian-ipfs-client" {
-#   name  = "guardian-ipfs-client"
-#   chart = "${path.root}/modules/helm-charts/charts/guardian-ipfs-client"
-#   #  repository = "${var.docker_repository}/ipfs-client"
-
-#   timeout = "360"
-
-#   values = [
-#     "${file("${path.root}/modules/helm-charts/charts/guardian-ipfs-client/values.yaml")}"
-#   ]
-
-#   set {
-#     name  = "image.repository"
-#     value = "${var.docker_repository}/ipfs-client"
-#   }
-
-#   set {
-#     name  = "image.tag"
-#     value = var.guardian_version
-#   }
-
-#   set_sensitive {
-#     name  = "global.guardian.ipfsKey"
-#     value = var.guardian_ipfs_key
-#   }
-#   set {
-#     name  = "global.guardian.enable_apm_name"
-#     value = local.enable_apm_name
-#   }
-#   set {
-#     name  = "resources.cpu"
-#     value = var.resource_configs.guardian_ipfs_client.cpu
-#   }
-#   set {
-#     name  = "resources.memory"
-#     value = var.resource_configs.guardian_ipfs_client.memory
-#   }
-
-#   set {
-#     name  = "replicaCount"
-#     value = var.resource_configs.guardian_ipfs_client.replicas
-#   }
-#   set {
-#     name  = "autoscaling.minReplicas"
-#     value = var.resource_configs.guardian_worker_service.replicas
-#   }
-#   set {
-#     name  = "autoscaling.enabled"
-#     value = var.resource_configs.guardian_ipfs_client.autoscale
-#   }
-
-#   set {
-#     name  = "chart-sha1"
-#     value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-ipfs-client/**") : filesha1(f)]))
-#   }
-
-#   depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
-# }
-
 resource "helm_release" "guardian-worker-service" {
   name  = "guardian-worker-service"
   chart = "${path.root}/modules/helm-charts/charts/guardian-worker-service"
@@ -584,6 +547,10 @@ resource "helm_release" "guardian-worker-service" {
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-worker-service/values.yaml")}"
   ]
+  set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
+  }
   set_sensitive {
     name  = "global.guardian.ipfsKey"
     value = var.guardian_ipfs_key
@@ -711,6 +678,11 @@ resource "helm_release" "guardian-extensions" {
   set {
     name  = "global.apm_labels"
     value = "env:${var.stage}"
+  }
+
+  set {
+    name  = "global.guardian.mq_message_chunk"
+    value = var.mq_message_size
   }
 
   set {

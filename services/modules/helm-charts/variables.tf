@@ -133,3 +133,9 @@ variable "vault_token" {
 }
 variable "vault_keys" {
 }
+
+variable "mq_message_size" {
+  description = "Message chunk size"
+  type        = number
+  default     = 100000000
+}

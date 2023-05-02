@@ -14,3 +14,4 @@ data:
   HASHICORP_WORKSPACE: "{{ .Values.global.vault.vault_workspace}}"
   IMPORT_KEYS_FROM_DB: "1"
   HASHICORP_ENCRIPTION_ALG: "sha256"
+  MQ_MESSAGE_CHUNK: "{{ .Values.global.guardian.mq_message_chunk}}"
