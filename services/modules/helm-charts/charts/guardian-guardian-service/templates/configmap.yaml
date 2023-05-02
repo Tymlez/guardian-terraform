@@ -21,3 +21,4 @@ data:
   SEND_KEYS_TO_VAULT: "TRUE"
   CONTRACT_FILE_ID: "0.0.6276"
   BBS_SIGNATURES_MODE: "WASM"
+  MQ_MESSAGE_CHUNK: "{{ .Values.global.guardian.mq_message_chunk}}"
