@@ -147,6 +147,12 @@ variable "resource_configs" {
       replicas  = 1,
       autoscale = false
     }
+    guardian_application_events = {
+      cpu       = "300m",
+      memory    = "256Mi",
+      replicas  = 1,
+      autoscale = false
+    }
   }
 }
 
