@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "guardian-application-events.fullname" . }}-{{ .Release.Revision }}
+  labels:
+    {{- include "guardian-application-events.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- toYaml .Values.service.ports | nindent 4 }}
+  selector:
+    {{- include "guardian-application-events.selectorLabels" . | nindent 4 }}

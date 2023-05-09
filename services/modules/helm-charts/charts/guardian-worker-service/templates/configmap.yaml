@@ -6,7 +6,7 @@ data:
   MQ_ADDRESS: message-broker
   SERVICE_CHANNEL: "worker"
   MIN_PRIORITY: "0"
-  MAX_PRIORITY: "19"
+  MAX_PRIORITY: "20"
   TASK_TIMEOUT: "300"
   REFRESH_INTERVAL: "60"
   ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
@@ -15,3 +15,4 @@ data:
   IPFS_PROVIDER: "web3storage"
   IPFS_PUBLIC_GATEWAY: "https://ipfs.io/ipfs/${cid}"
   MQ_MESSAGE_CHUNK: "{{ .Values.global.guardian.mq_message_chunk}}"
+  MAX_HEDERA_TIMEOUT: "600"

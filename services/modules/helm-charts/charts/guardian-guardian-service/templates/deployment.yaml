@@ -50,6 +50,9 @@ spec:
                 name: {{ include "guardian-guardian-service.fullname" . }}-{{ .Release.Revision }}
             - secretRef:
                 name: {{ include "guardian-guardian-service.fullname" . }}-{{ .Release.Revision }}
+
+            - configMapRef:
+                name: guardian-extensions-shared
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - configMapRef:
                 name: guardian-extensions-newrelic
@@ -63,14 +66,11 @@ spec:
               readOnly: true
               mountPath: /usr/local/guardian-service/entrypoint.sh
               subPath: entrypoint.sh
-            # - name: guardian-extensions-files
-            #   readOnly: true
-            #   mountPath: /usr/local/guardian-service/dist/policy-engine/policy-engine.js
-            #   subPath: policy-engine.js
-            # - name: guardian-extensions-files
-            #   readOnly: true
-            #   mountPath: /usr/local/guardian-service/dist/app.js
-            #   subPath: app.js
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/local/api-gateway/node_modules/@guardian/common/dist/helpers/db-helper.js
+              subPath: db-helper.js
+            
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
@@ -89,10 +89,8 @@ spec:
                 path: message-broker-channel.js     
               - key: guardian-healthcheck.js
                 path: guardian-healthcheck.js
-              # - key: app.js
-              #   path: app.js
-              # - key: policy-engine.js
-              #   path: policy-engine.js
+              - key: db-helper.js
+                path: db-helper.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

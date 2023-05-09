@@ -5,7 +5,7 @@ metadata:
 data:  
   MQ_ADDRESS: message-broker
   DB_HOST: mongodb
-  DB_DATABASE: guardian_db
+  DB_DATABASE: logger_db
   SERVICE_CHANNEL: "logger-service"
   ENABLE_APM_NAME: "{{ .Values.global.guardian.enable_apm_name }}"
   NEW_RELIC_APP_NAME: "{{ include "guardian-logger-service.fullname" . }}"
