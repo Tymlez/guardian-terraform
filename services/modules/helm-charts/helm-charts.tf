@@ -137,10 +137,7 @@ resource "helm_release" "guardian-logger-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-logger-service/values.yaml")}"
   ]
 
-  set {
-    name  = "global.guardian.mq_message_chunk"
-    value = var.mq_message_size
-  }
+
 
   set {
     name  = "resources.cpu"
@@ -194,10 +191,7 @@ resource "helm_release" "guardian-auth-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-auth-service/values.yaml")}"
   ]
 
-  set {
-    name  = "global.guardian.mq_message_chunk"
-    value = var.mq_message_size
-  }
+
   set {
     name  = "image.repository"
     value = "${var.docker_repository}/auth-service"
@@ -272,10 +266,7 @@ resource "helm_release" "guardian-api-gateway" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-api-gateway/values.yaml")}"
   ]
 
-  set {
-    name  = "global.guardian.mq_message_chunk"
-    value = var.mq_message_size
-  }
+
   set {
     name  = "image.repository"
     value = "${var.docker_repository}/api-gateway"
@@ -327,10 +318,7 @@ resource "helm_release" "guardian-guardian-service" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-guardian-service/values.yaml")}"
   ]
 
-  set {
-    name  = "global.guardian.mq_message_chunk"
-    value = var.mq_message_size
-  }
+
 
 
   set {
@@ -424,10 +412,7 @@ resource "helm_release" "guardian-policy-service" {
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-policy-service/values.yaml")}"
   ]
-  set {
-    name  = "global.guardian.mq_message_chunk"
-    value = var.mq_message_size
-  }
+
   set {
     name  = "image.repository"
     value = "${var.docker_repository}/policy-service"
@@ -547,10 +532,7 @@ resource "helm_release" "guardian-worker-service" {
   values = [
     "${file("${path.root}/modules/helm-charts/charts/guardian-worker-service/values.yaml")}"
   ]
-  set {
-    name  = "global.guardian.mq_message_chunk"
-    value = var.mq_message_size
-  }
+
   set_sensitive {
     name  = "global.guardian.ipfsKey"
     value = var.guardian_ipfs_key
@@ -602,6 +584,65 @@ resource "helm_release" "guardian-worker-service" {
   depends_on = [helm_release.guardian-message-broker, helm_release.extensions, helm_release.guardian-auth-service]
 }
 
+resource "helm_release" "guardian-application-events" {
+  name         = "guardian-application-events"
+  chart        = "${path.root}/modules/helm-charts/charts/guardian-application-events"
+  force_update = true
+  timeout      = "180"
+
+  values = [
+    "${file("${path.root}/modules/helm-charts/charts/guardian-application-events/values.yaml")}"
+  ]
+
+
+  set {
+    name  = "chart-sha"
+    value = sha1(join("", [for f in fileset(path.root, "modules/helm-charts/charts/guardian-application-events/**") : filesha1(f)]))
+  }
+
+  set {
+    name  = "image.repository"
+    value = "${var.docker_repository}/application-events"
+  }
+
+  set {
+    name  = "image.tag"
+    value = var.guardian_version
+  }
+
+  set {
+    name  = "global.guardian.enable_apm_name"
+    value = local.enable_apm_name
+  }
+
+  set {
+    name  = "resources.cpu"
+    value = var.resource_configs.guardian_application_events.cpu
+  }
+  set {
+    name  = "resources.memory"
+    value = var.resource_configs.guardian_application_events.memory
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.resource_configs.guardian_application_events.replicas
+  }
+
+  set {
+    name  = "autoscaling.minReplicas"
+    value = var.resource_configs.guardian_application_events.replicas
+  }
+
+  set {
+    name  = "autoscaling.enabled"
+    value = var.resource_configs.guardian_application_events.autoscale
+  }
+
+  depends_on = [helm_release.guardian-message-broker, helm_release.extensions]
+}
+
+
 resource "helm_release" "ingress-nginx" {
   count      = var.use_ingress ? 1 : 0
   name       = "ingress-nginx"
@@ -633,6 +674,11 @@ resource "helm_release" "guardian-extensions" {
     "${file("${path.root}/modules/helm-charts/charts/guardian-extensions/values.yaml")}",
 
   ]
+
+  set {
+    name  = "global.guardian.network"
+    value = coalesce(var.guardian_network, "testnet")
+  }
 
   set {
     name  = "vault_keys"

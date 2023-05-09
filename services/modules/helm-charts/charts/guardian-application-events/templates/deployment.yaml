@@ -1,18 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "guardian-api-gateway.fullname" . }}
+  name: {{ include "guardian-application-events.fullname" . }}
   labels:
-    {{- include "guardian-api-gateway.labels" . | nindent 4 }}
+    {{- include "guardian-application-events.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+    {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.global.guardian.replicas | default .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "guardian-api-gateway.selectorLabels" . | nindent 6 }}
-  strategy: 
-    type: Recreate
+      {{- include "guardian-application-events.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,7 +23,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "guardian-api-gateway.selectorLabels" . | nindent 8 }}
+        {{- include "guardian-application-events.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -35,8 +38,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: 'p3002'
-              containerPort: 3002
+            - name: p3004
+              containerPort: 3004
               protocol: TCP
           command: ["/bin/sh"]
           args: ["entrypoint.sh"]
@@ -46,41 +49,41 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources: 
             limits:
-              cpu: "{{ .Values.resources.cpu}}"
-              memory: "{{ .Values.resources.memory}}"
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
             requests:
-              cpu: "{{ .Values.resources.cpu}}"
-              memory: "{{ .Values.resources.memory}}"
-
+              cpu: "{{ .Values.resources.cpu }}"
+              memory: "{{ .Values.resources.memory }}"
           envFrom:
+            - configMapRef:
+                name: {{ include "guardian-application-events.fullname" . }}-{{ .Release.Revision }}
+            
+            - configMapRef:
+                name: guardian-extensions-shared
+
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - configMapRef:
                 name: guardian-extensions-newrelic
             {{- end}}
-            - configMapRef:
-                name: {{ include "guardian-api-gateway.fullname" . }}-{{ .Release.Revision }}         
-            - configMapRef:
-                name: guardian-extensions-shared
           volumeMounts:
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/local/api-gateway/guardian-healthcheck.js
+              mountPath: /usr/local/application-events/guardian-healthcheck.js
               subPath: guardian-healthcheck.js
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/local/api-gateway/entrypoint.sh
+              mountPath: /usr/local/application-events/entrypoint.sh
               subPath: entrypoint.sh
-            
+
             - name: guardian-extensions-files
               readOnly: true
               mountPath: /usr/local/api-gateway/node_modules/@guardian/common/dist/helpers/db-helper.js
               subPath: db-helper.js
-            
 
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
-              mountPath: /usr/local/api-gateway/node_modules/@guardian/common/dist/mq/message-broker-channel.js
+              mountPath: /usr/local/application-events/node_modules/@guardian/common/dist/mq/message-broker-channel.js
               subPath: message-broker-channel.js
             {{- end }}
 
@@ -109,4 +112,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-

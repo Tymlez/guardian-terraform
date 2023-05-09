@@ -66,7 +66,10 @@ spec:
               readOnly: true
               mountPath: /usr/local/worker-service/entrypoint.sh
               subPath: entrypoint.sh
-            
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/local/api-gateway/node_modules/@guardian/common/dist/helpers/db-helper.js
+              subPath: db-helper.js
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
@@ -85,6 +88,8 @@ spec:
                 path: message-broker-channel.js     
               - key: guardian-healthcheck.js
                 path: guardian-healthcheck.js
+              - key: db-helper.js
+                path: db-helper.js
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
