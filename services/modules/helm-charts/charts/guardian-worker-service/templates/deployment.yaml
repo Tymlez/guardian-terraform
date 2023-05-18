@@ -70,6 +70,11 @@ spec:
               readOnly: true
               mountPath: /usr/local/api-gateway/node_modules/@guardian/common/dist/helpers/db-helper.js
               subPath: db-helper.js
+            - name: guardian-extensions-files
+              readOnly: true
+              mountPath: /usr/local/worker-service/node_modules/@hashgraph/sdk/lib/topic/TopicMessageSubmitTransaction.cjs
+              subPath: TopicMessageSubmitTransaction.cjs
+
             {{- if eq .Values.global.guardian.enable_apm_name "newrelic" }}
             - name: guardian-extensions-files
               readOnly: true
@@ -88,6 +93,8 @@ spec:
                 path: message-broker-channel.js     
               - key: guardian-healthcheck.js
                 path: guardian-healthcheck.js
+              - key: TopicMessageSubmitTransaction.cjs
+                path: TopicMessageSubmitTransaction.cjs
               - key: db-helper.js
                 path: db-helper.js
       {{- with .Values.nodeSelector }}
