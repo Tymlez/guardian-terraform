@@ -19,7 +19,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "guardian-extensions.name" . }}-shared
 data:
-  MQ_MAX_PAYLOAD: "10485760"
+  MQ_MAX_PAYLOAD: "30485760"
   MQ_MESSAGE_CHUNK: "{{ .Values.global.guardian.mq_message_chunk}}"
   MESSAGE_LANG: "en-US"
   PREUSED_HEDERA_NET: "{{ .Values.global.guardian.network}}"
